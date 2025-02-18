@@ -30,7 +30,7 @@ public class UserController {
     private UserService userService;
 
     @GetMapping
-    public List<User> findAll() {
+    public List<UserDTO> findAll() {
         return userService.findAll();
     }
 
@@ -40,7 +40,7 @@ public class UserController {
     }
     
     @PostMapping
-    public User createUser(@RequestBody User user) {
+    public UserDTO createUser(@RequestBody UserDTO user) {
         return userService.save(user);
     }
     

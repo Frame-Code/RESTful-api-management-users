@@ -5,8 +5,24 @@ $(document).ready(function () {
     $('#usersTable').DataTable();
 });
 
-function deleteUser(id) {
-    alert(id);
+async function deleteUser(id) {
+    if(!confirm('Do yo want to delete the user selected?')) {
+        return;
+    }
+    
+    const response = await fetch(`http://localhost:8080/api/users/${id}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+    
+    if(!response.ok) {
+        throw new Error(`Http error! status: ${response.status}`)
+    }
+    
+    await alert("User deleted");
+    await d.location.reload();
 }
 
 async function loadUsers() {

@@ -10,6 +10,7 @@ import com.firstSpring.firstSpring.model.User;
 import com.firstSpring.firstSpring.repository.UserRepository;
 import com.firstSpring.firstSpring.service.mappers.UserMapper;
 import java.time.LocalDate;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -19,10 +20,12 @@ public class UserService {
 
     private final UserMapper userMapper = UserMapper.INSTANCE;
     
-    public List<User> findAll() {
-        return userRepository.findAllActiveUsers();
+    public List<UserDTO> findAll() {
+        return userRepository.findAllActiveUsers().stream()
+                .map(UserMapper.INSTANCE::toDTO)
+                .collect(Collectors.toList());
     }
-
+    
     public UserDTO findById(Long id) {
         User user = userRepository.findByIdActive(id).orElseThrow(() ->
                 new RuntimeException("User not found")
@@ -30,14 +33,15 @@ public class UserService {
         return userMapper.toDTO(user);
     }
 
-    public User save(User user) {
+    public UserDTO save(UserDTO userDTO) {
+        User user = userMapper.toEntity(userDTO);
         user.setCreatedAt(LocalDate.now());
         user.setDeleted(false);
-        return userRepository.save(user);
+        return userMapper.toDTO(userRepository.save(user));
     }
     
     public void softDeleteById(Long id) {
-        userRepository.softDeleteById(id);;
+        userRepository.softDeleteById(id);
     }
     
 
