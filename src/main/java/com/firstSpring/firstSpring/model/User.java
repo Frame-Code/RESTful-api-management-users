@@ -1,5 +1,7 @@
 package com.firstSpring.firstSpring.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -43,9 +45,11 @@ public class User {
     @Column(name = "password", length = 60, nullable = false)
     private String password;
 
+    @JsonIgnore
     @Column(name = "is_deleted", nullable = false)
-    private boolean deleted;
+    private boolean deleted = false;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column(name = "created_at", nullable = false)
     private LocalDate createdAt;
 

@@ -1,5 +1,6 @@
 package com.firstSpring.firstSpring.controllers;
 
+import com.firstSpring.firstSpring.dto.UserDTO;
 import com.firstSpring.firstSpring.model.User;
 
 import com.firstSpring.firstSpring.service.UserService;
@@ -11,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,7 +34,12 @@ public class UserController {
     }
 
     @GetMapping(value = "/{id}")
-    public Optional<User> findUserByID(@PathVariable Long id) {
+    public UserDTO findUserByID(@PathVariable Long id) {
         return userService.findById(id);
+    }
+    
+    @PostMapping
+    public User createUser(@RequestBody User user) {
+        return userService.save(user);
     }
 }
