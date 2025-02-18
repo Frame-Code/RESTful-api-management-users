@@ -7,7 +7,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 
 import java.time.LocalDate;
 
@@ -50,7 +53,12 @@ public class User {
     private boolean deleted = false;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    @Column(name = "created_at", nullable = false)
+    @Temporal(TemporalType.DATE)
     private LocalDate createdAt;
+    
+    @PrePersist
+    protected void addDate() {
+        createdAt = LocalDate.now();
+    }
 
 }

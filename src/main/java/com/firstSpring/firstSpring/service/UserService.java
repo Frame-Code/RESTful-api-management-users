@@ -2,7 +2,6 @@ package com.firstSpring.firstSpring.service;
 
 import com.firstSpring.firstSpring.dto.UserDTO;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.firstSpring.firstSpring.model.User;
 import com.firstSpring.firstSpring.repository.UserRepository;
 import com.firstSpring.firstSpring.service.mappers.UserMapper;
+import java.time.LocalDate;
 
 @Service
 public class UserService {
@@ -31,8 +31,14 @@ public class UserService {
     }
 
     public User save(User user) {
+        user.setCreatedAt(LocalDate.now());
         user.setDeleted(false);
         return userRepository.save(user);
     }
+    
+    public void softDeleteById(Long id) {
+        userRepository.softDeleteById(id);;
+    }
+    
 
 }
