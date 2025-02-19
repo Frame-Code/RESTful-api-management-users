@@ -1,12 +1,11 @@
 package com.firstSpring.firstSpring.controllers;
 
+import com.firstSpring.firstSpring.dto.UserCreateDTO;
 import com.firstSpring.firstSpring.dto.UserDTO;
-import com.firstSpring.firstSpring.model.User;
 
 import com.firstSpring.firstSpring.service.UserService;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,7 +39,7 @@ public class UserController {
     }
     
     @PostMapping
-    public UserDTO createUser(@RequestBody UserDTO user) {
+    public UserDTO createUser(@RequestBody UserCreateDTO user) {
         return userService.save(user);
     }
     

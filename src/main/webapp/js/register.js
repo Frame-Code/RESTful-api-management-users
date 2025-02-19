@@ -1,9 +1,9 @@
 const d = document;
 
-d.querySelector("#btnRegister").addEventListener("click", checkPassword());
+d.querySelector("#btnRegister").addEventListener("click", checkPassword);
 
 function checkPassword() {
-    if (!d.querySelector("#inputPassword").value === d.querySelector("#repeatPassword").value) {
+    if (!(d.querySelector("#inputPassword").value === d.querySelector("#repeatPassword").value)) {
         alert("Fields password are incorrect");
         return;
     }
@@ -17,7 +17,7 @@ async function register() {
         lastName: d.querySelector("#impLastName").value,
         email: d.querySelector("#impEmail").value,
         phone: d.querySelector("#impPhone").value,
-        password: d.querySelector("#nputPassword").value
+        password: d.querySelector("#inputPassword").value
     };
     
     const response = await fetch("http://localhost:8080/api/users", {
@@ -34,5 +34,6 @@ async function register() {
     }
     
     await alert("User created succesfully");
+    
     
 }
