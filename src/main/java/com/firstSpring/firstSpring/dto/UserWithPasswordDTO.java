@@ -14,6 +14,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class UserCreateDTO extends UserDTO{
+public class UserWithPasswordDTO extends UserDTO{
     private String password;
 }

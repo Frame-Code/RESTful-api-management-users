@@ -1,6 +1,6 @@
 package com.firstSpring.firstSpring.service;
 
-import com.firstSpring.firstSpring.dto.UserCreateDTO;
+import com.firstSpring.firstSpring.dto.UserWithPasswordDTO;
 import com.firstSpring.firstSpring.dto.UserDTO;
 import java.util.List;
 
@@ -34,7 +34,7 @@ public class UserService {
         return userMapper.toDTO(user);
     }
 
-    public UserDTO save(UserCreateDTO userDTO) {
+    public UserDTO save(UserWithPasswordDTO userDTO) {
         User user = userMapper.toEntity(userDTO);
         user.setCreatedAt(LocalDate.now());
         user.setDeleted(false);

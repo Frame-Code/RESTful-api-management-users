@@ -1,6 +1,6 @@
 package com.firstSpring.firstSpring.controllers;
 
-import com.firstSpring.firstSpring.dto.UserCreateDTO;
+import com.firstSpring.firstSpring.dto.UserWithPasswordDTO;
 import com.firstSpring.firstSpring.dto.UserDTO;
 
 import com.firstSpring.firstSpring.service.UserService;
@@ -39,7 +39,7 @@ public class UserController {
     }
     
     @PostMapping
-    public UserDTO createUser(@RequestBody UserCreateDTO user) {
+    public UserDTO createUser(@RequestBody UserWithPasswordDTO user) {
         return userService.save(user);
     }
     

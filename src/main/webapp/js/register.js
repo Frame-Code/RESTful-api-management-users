@@ -33,7 +33,7 @@ async function register() {
         throw new Error(`Http error! status ${response.status}`);
     }
     
-    await alert("User created succesfully");
-    
-    
+    await alert("User created succesfully"); 
+    await window.location.replace("./login.html");
+   
 }

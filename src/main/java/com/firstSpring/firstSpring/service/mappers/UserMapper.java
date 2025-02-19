@@ -1,6 +1,6 @@
 package com.firstSpring.firstSpring.service.mappers;
 
-import com.firstSpring.firstSpring.dto.UserCreateDTO;
+import com.firstSpring.firstSpring.dto.UserWithPasswordDTO;
 import com.firstSpring.firstSpring.dto.UserDTO;
 import com.firstSpring.firstSpring.model.User;
 import org.mapstruct.InheritInverseConfiguration;
@@ -26,12 +26,12 @@ public interface UserMapper {
     UserDTO toDTO(User user);
 
     @Mapping(target = "password", source = "password")
-    UserCreateDTO toUserCreateDTO(User user);
+    UserWithPasswordDTO toUserCreateDTO(User user);
 
     @InheritInverseConfiguration(name = "toUserCreateDTO")
     @Mapping(target = "deleted", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
-    User toEntity(UserCreateDTO userCreateDTO);
+    User toEntity(UserWithPasswordDTO userCreateDTO);
 
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "deleted", ignore = true)
