@@ -8,7 +8,7 @@ async function login() {
         password: d.querySelector("#exampleInputPassword").value
     };
 
-    const request = await fetch("http://localhost:8080/api/login", {
+    const request = await fetch("http://localhost:8080/auth", {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
@@ -22,14 +22,12 @@ async function login() {
      if(!response.ok) {
      throw new Error(`Http error, status: ${response.status}`);
      }*/
-
-    if (response === "ok") {
+    
+    if (response.toString() === "ok") {
         alert("Login succesfully");
-        await window.location.replace("./users.html");
+        window.location.replace("./users.html");
     } else {
         alert("User not found");
     }
-
-
 
 }
