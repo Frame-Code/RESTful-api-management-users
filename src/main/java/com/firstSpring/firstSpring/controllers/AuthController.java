@@ -22,6 +22,6 @@ public class AuthController {
     
     @PostMapping
     public String login(@RequestBody UserWithPasswordDTO userDTO) {
-        return (authService.checkCredentials(userDTO)) ? "Ok" : "fail";
+        return authService.isRegister(userDTO) ? "ok" : "fail";
     }
 }

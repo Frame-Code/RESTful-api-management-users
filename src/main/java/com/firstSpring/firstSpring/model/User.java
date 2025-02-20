@@ -39,13 +39,13 @@ public class User {
     @Column(name = "last_name", length = 60, nullable = false)
     private String lastName;
 
-    @Column(name = "email", length = 60, nullable = false)
+    @Column(name = "email", length = 60, nullable = false, unique = true)
     private String email;
 
-    @Column(name = "phone", length = 15, nullable = false)
+    @Column(name = "phone", length = 15, nullable = false, unique = true)
     private String phone;
 
-    @Column(name = "password", length = 60, nullable = false)
+    @Column(name = "password", length = 260, nullable = false)
     private String password;
 
     @JsonIgnore
