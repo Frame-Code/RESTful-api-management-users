@@ -1,14 +1,18 @@
 package com.firstSpring.firstSpring.service;
 
 import com.firstSpring.firstSpring.dto.TokenResponse;
-import com.firstSpring.firstSpring.dto.UserWithPasswordDTO;
+import com.firstSpring.firstSpring.dto.UserLogin;
+import com.firstSpring.firstSpring.dto.UserRegister;
+import com.firstSpring.firstSpring.model.Token;
 import com.firstSpring.firstSpring.model.User;
 import com.firstSpring.firstSpring.repository.TokenRepository;
 import com.firstSpring.firstSpring.repository.UserRepository;
-import de.mkammerer.argon2.Argon2;
-import de.mkammerer.argon2.Argon2Factory;
-import java.util.Optional;
+import com.firstSpring.firstSpring.service.mappers.UserMapper;
+
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
@@ -16,35 +20,46 @@ import org.springframework.stereotype.Service;
  * @author Artist-Code
  */
 @Service
+@RequiredArgsConstructor
 public class AuthService {
-
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private TokenRepository tokenRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final UserMapper userMapper;
+    private final JwtService jwtService;
 
-    Argon2 argon = Argon2Factory.create(Argon2Factory.Argon2Types.ARGON2id);
-
-    public boolean isRegister(UserWithPasswordDTO userDTO) {
-        Optional<User> userOpt = userRepository.findByEmail(userDTO.getEmail());
-        if (userOpt.isEmpty()) {
-            return false;
-        }
-
-        return argon.verify(userOpt.get().getPassword(), userDTO.getPassword().toCharArray());
-
+    public TokenResponse register(UserRegister userRegister) {
+        User user = userMapper.toEntity(userRegister); //Mapea el dto a un User
+        user.setPassword(passwordEncoder.encode(userRegister.getPassword())); //Le setea la constraseña encriptada
+        User savedUser = userRepository.save(user); //Guarda el User en la db
+        
+        
+        String jwtToken = jwtService.generateToken(user); //Genera el acces tokenn
+        String refreshToken = jwtService.generateRefreshToken(user); //Genera el refresh token
+        saveUserToken(savedUser, jwtToken); //Genera la instancia de tipo Token y la guarda en la db
+        return new TokenResponse(jwtToken, refreshToken); //Retorna una instancia de tipo TokenResponse que se termina volviendo al front como json
     }
 
-    public TokenResponse register(UserWithPasswordDTO userDTO) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    public TokenResponse login(UserWithPasswordDTO userDTO) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public TokenResponse login(UserLogin userDTO) {
+        return null;
     }
 
     public TokenResponse refreshToken(String authHeader) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+    
+    private void saveUserToken(User user, String jwtToken) {
+        tokenRepository.save(
+        Token.builder()
+                .user(user)
+                .token(jwtToken)
+                .tokenType(Token.TokenType.BEARER)
+                .expired(false)
+                .revoked(false) 
+                .build()
+        );
+                
     }
 }

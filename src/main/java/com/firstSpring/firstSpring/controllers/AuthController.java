@@ -1,7 +1,8 @@
 package com.firstSpring.firstSpring.controllers;
 
 import com.firstSpring.firstSpring.dto.TokenResponse;
-import com.firstSpring.firstSpring.dto.UserWithPasswordDTO;
+import com.firstSpring.firstSpring.dto.UserLogin;
+import com.firstSpring.firstSpring.dto.UserRegister;
 import com.firstSpring.firstSpring.service.AuthService;
 
 import org.springframework.http.ResponseEntity;
@@ -26,13 +27,13 @@ public class AuthController {
     private AuthService authService;
     
     @PostMapping("/login")
-    public ResponseEntity<TokenResponse> authenticate(@RequestBody final UserWithPasswordDTO userDTO) {
+    public ResponseEntity<TokenResponse> authenticate(@RequestBody final UserLogin userDTO) {
         final TokenResponse token = authService.login(userDTO);
         return ResponseEntity.ok(token);
     }
     
     @PostMapping("/register")
-    public ResponseEntity<TokenResponse> register(@RequestBody final UserWithPasswordDTO userDTO) {
+    public ResponseEntity<TokenResponse> register(@RequestBody final UserRegister userDTO) {
         final TokenResponse token = authService.register(userDTO);
         return ResponseEntity.ok(token);
     }

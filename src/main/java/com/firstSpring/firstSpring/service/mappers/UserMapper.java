@@ -1,7 +1,9 @@
 package com.firstSpring.firstSpring.service.mappers;
 
-import com.firstSpring.firstSpring.dto.UserWithPasswordDTO;
 import com.firstSpring.firstSpring.dto.UserDTO;
+import com.firstSpring.firstSpring.dto.UserLogin;
+import com.firstSpring.firstSpring.dto.UserRegister;
+import com.firstSpring.firstSpring.dto.UserResponse;
 import com.firstSpring.firstSpring.model.User;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
@@ -17,25 +19,37 @@ public interface UserMapper {
 
     public UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
-    //Map User to UserDTO
-    @Mapping(target = "id", source = "id")
-    @Mapping(target = "name", source = "name")
-    @Mapping(target = "lastName", source = "lastName")
-    @Mapping(target = "email", source = "email")
-    @Mapping(target = "phone", source = "phone")
+    //Map User to DTO
     UserDTO toDTO(User user);
 
-    @Mapping(target = "password", source = "password")
-    UserWithPasswordDTO toUserCreateDTO(User user);
+    UserRegister toUserRegister(User user);
 
-    @InheritInverseConfiguration(name = "toUserCreateDTO")
+    UserLogin toUserLogin(User user);
+    
+    UserResponse toUserResponse(User user);
+
+    @InheritInverseConfiguration(name = "toUserRegister")
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "deleted", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
-    User toEntity(UserWithPasswordDTO userCreateDTO);
+    @Mapping(target = "tokens", ignore = true)
+    User toEntity(UserRegister userRegister);
 
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "deleted", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     User toEntity(UserDTO userDTO);
+
+    @InheritInverseConfiguration(name = "toUserLogin")
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "name", ignore = true)
+    @Mapping(target = "lastName", ignore = true)
+    @Mapping(target = "phone", ignore = true)
+    @Mapping(target = "deleted", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "tokens", ignore = true)
+    User toEntity(UserLogin userLogin);
+    
+    User toEntity(UserResponse userResponse);
 
 }

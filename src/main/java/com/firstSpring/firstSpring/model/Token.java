@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -19,8 +20,7 @@ import lombok.NoArgsConstructor;
  */
 @Entity(name = "tokens")
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Builder
 public class Token {
     
     public enum TokenType {

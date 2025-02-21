@@ -1,7 +1,6 @@
+
 package com.firstSpring.firstSpring.dto;
 
-import com.firstSpring.firstSpring.model.Token;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,13 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDTO {
-
-    private Long id;
-    private String name;
-    private String lastName;
+public class UserLogin {
     private String email;
-    private String phone;
     private String password;
-    private List<Token> tokens;
 }
