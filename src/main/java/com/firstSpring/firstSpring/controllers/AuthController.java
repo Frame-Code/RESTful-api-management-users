@@ -34,7 +34,24 @@ public class AuthController {
     
     @PostMapping("/register")
     public ResponseEntity<TokenResponse> register(@RequestBody final UserRegister userDTO) {
+        System.out.println("Entro a register--------------------");
+        System.out.println("");
+        System.out.println("");
+        System.out.println("");
+        System.out.println("");System.out.println("");
+        System.out.println("");
+        System.out.println("");
+        System.out.println("");System.out.println("");
+        System.out.println("");
+        System.out.println("");
+        System.out.println("");
+        System.out.println("");
+        System.out.println("");
+        
+        
+        
         final TokenResponse token = authService.register(userDTO);
+        System.out.println("Esta retornando-------------------");
         return ResponseEntity.ok(token);
     }
     

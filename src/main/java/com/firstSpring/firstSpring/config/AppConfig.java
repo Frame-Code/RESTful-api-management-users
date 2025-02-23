@@ -1,7 +1,9 @@
 package com.firstSpring.firstSpring.config;
 
 import com.firstSpring.firstSpring.service.mappers.UserMapper;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
