@@ -33,7 +33,7 @@ public class AuthController {
     }
     
     @PostMapping("/register")
-    public ResponseEntity<TokenResponse> register(@RequestBody final UserRegister userDTO) {
+    public ResponseEntity<TokenResponse> register(@RequestBody final UserRegister userRegister) {
         System.out.println("Entro a register--------------------");
         System.out.println("");
         System.out.println("");
@@ -50,7 +50,7 @@ public class AuthController {
         
         
         
-        final TokenResponse token = authService.register(userDTO);
+        final TokenResponse token = authService.register(userRegister);
         System.out.println("Esta retornando-------------------");
         return ResponseEntity.ok(token);
     }

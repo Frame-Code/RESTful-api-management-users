@@ -26,6 +26,7 @@ public class AuthService {
     private UserRepository userRepository;
     @Autowired
     private TokenRepository tokenRepository;
+    
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
     private final JwtService jwtService;

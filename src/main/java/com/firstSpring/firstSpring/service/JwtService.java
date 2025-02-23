@@ -23,7 +23,7 @@ public class JwtService {
     @Value("${security.jwt.expiration}")
     private long jwtExpiration;
 
-    @Value("${security.jwt.refresht-token}")
+    @Value("${security.jwt.refresh-token}")
     private long refreshExpiration;
     
     public String generateToken(final User user) {

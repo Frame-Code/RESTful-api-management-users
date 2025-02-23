@@ -1,4 +1,4 @@
-/*package com.firstSpring.firstSpring.config;
+package com.firstSpring.firstSpring.config;
 
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Bean;
@@ -11,7 +11,7 @@ import org.springframework.security.web.SecurityFilterChain;
 /**
  *
  * @author Artist-Code
- 
+*/
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
@@ -26,4 +26,3 @@ public class WebSecurityConfig {
         return http.build();
     }
 }
-*/
