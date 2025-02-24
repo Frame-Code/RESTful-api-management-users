@@ -22,9 +22,4 @@ public class AppConfig {
         return UserMapper.INSTANCE;
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
 }
