@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.firstSpring.firstSpring.model.User;
+import com.firstSpring.firstSpring.model.UserEntity;
 import com.firstSpring.firstSpring.repository.UserRepository;
 import com.firstSpring.firstSpring.service.mappers.UserMapper;
 
@@ -32,7 +32,7 @@ public class UserService {
     }
 
     public Optional<UserResponse> findById(Long id) {
-        Optional<User> userOpt = userRepository.findByIdActive(id);
+        Optional<UserEntity> userOpt = userRepository.findByIdActive(id);
         if(userOpt.isPresent()) {
             return Optional.of(userMapper.toUserResponse(userOpt.get()));
         }
@@ -41,6 +41,6 @@ public class UserService {
 
     public void softDeleteById(Long id) {
         userRepository.softDeleteById(id);
-    }
+    } 
 
 }

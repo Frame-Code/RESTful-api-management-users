@@ -1,6 +1,6 @@
 package com.firstSpring.firstSpring.service;
 
-import com.firstSpring.firstSpring.model.User;
+import com.firstSpring.firstSpring.model.UserEntity;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -26,17 +26,16 @@ public class JwtService {
     @Value("${security.jwt.refresh-token}")
     private long refreshExpiration;
     
-    public String generateToken(final User user) {
+    public String generateToken(final UserEntity user) {
         return buildToken(user, jwtExpiration);
     }
     
-    public String generateRefreshToken(final User user) {
+    public String generateRefreshToken(final UserEntity user) {
         return buildToken(user, refreshExpiration);
     }
     
-    private String buildToken(final User user, final long expiration) {
+    private String buildToken(final UserEntity user, final long expiration) {
         return Jwts.builder()
-                .id(user.getId().toString()) //id: opcional
                 .claims(Map.of("name", user.getName())) //Informacion adicional de la clave: opcional
                 .subject(user.getEmail()) //UNIQUE value to identify the user in the token
                 .issuedAt(new Date(System.currentTimeMillis())) //When was created the token

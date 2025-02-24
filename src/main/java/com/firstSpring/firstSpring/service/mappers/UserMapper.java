@@ -4,7 +4,7 @@ import com.firstSpring.firstSpring.dto.UserDTO;
 import com.firstSpring.firstSpring.dto.UserLogin;
 import com.firstSpring.firstSpring.dto.UserRegister;
 import com.firstSpring.firstSpring.dto.UserResponse;
-import com.firstSpring.firstSpring.model.User;
+import com.firstSpring.firstSpring.model.UserEntity;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -19,26 +19,28 @@ public interface UserMapper {
 
     public UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
-    //Map User to DTO
-    UserDTO toDTO(User user);
+    //Map UserEntity to DTO
+    UserDTO toDTO(UserEntity user);
 
-    UserRegister toUserRegister(User user);
+    UserRegister toUserRegister(UserEntity user);
 
-    UserLogin toUserLogin(User user);
-    
-    UserResponse toUserResponse(User user);
+    UserLogin toUserLogin(UserEntity user);
+
+    UserResponse toUserResponse(UserEntity user);
 
     @InheritInverseConfiguration(name = "toUserRegister")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "deleted", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "tokens", ignore = true)
-    User toEntity(UserRegister userRegister);
+    @Mapping(target = "roles", ignore = true)
+    UserEntity toEntity(UserRegister userRegister);
 
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "deleted", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
-    User toEntity(UserDTO userDTO);
+    @Mapping(target = "roles", ignore = true)
+    UserEntity toEntity(UserDTO userDTO);
 
     @InheritInverseConfiguration(name = "toUserLogin")
     @Mapping(target = "id", ignore = true)
@@ -47,9 +49,15 @@ public interface UserMapper {
     @Mapping(target = "phone", ignore = true)
     @Mapping(target = "deleted", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "roles", ignore = true)
     @Mapping(target = "tokens", ignore = true)
-    User toEntity(UserLogin userLogin);
+    UserEntity toEntity(UserLogin userLogin);
     
-    User toEntity(UserResponse userResponse);
+    @Mapping(target = "password", ignore = true)
+    @Mapping(target = "deleted", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "roles", ignore = true)
+    @Mapping(target = "tokens", ignore = true)
+    UserEntity toEntity(UserResponse userResponse);
 
 }

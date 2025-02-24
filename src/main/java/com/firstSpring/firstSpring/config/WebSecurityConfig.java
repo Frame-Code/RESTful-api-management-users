@@ -31,7 +31,7 @@ import org.springframework.security.web.SecurityFilterChain;
  */
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
+@EnableMethodSecurity //Is used to can be use anotations to define the filters (here down the .authorizettpRequest...) in each class and each endpoint but don´t like it, I prefer this option
 public class WebSecurityConfig {
 
     //HttpSecurity object go to around of all filters from SecurityyFilerChain

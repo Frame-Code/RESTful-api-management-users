@@ -32,11 +32,6 @@ public class AuthController {
         return "Hello world";
     }
 
-    @GetMapping("/test-secured")
-    public String testSecure() {
-        return "Hello world secure";
-    }
-
     @PostMapping("/login")
     public ResponseEntity<TokenResponse> authenticate(@RequestBody final UserLogin userDTO) {
         final TokenResponse token = authService.login(userDTO);
