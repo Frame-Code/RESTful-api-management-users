@@ -77,8 +77,9 @@ public class AuthService {
 
     }
 
-    public Token createToken(String jwtToken) {
+    public Token createToken(UserEntity user, String jwtToken) {
         return Token.builder()
+                .user(user)
                 .token(jwtToken)
                 .tokenType(TokenType.BEARER)
                 .expired(false)

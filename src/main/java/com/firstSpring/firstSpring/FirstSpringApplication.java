@@ -6,6 +6,7 @@ import com.firstSpring.firstSpring.model.PermissionsEnum;
 import com.firstSpring.firstSpring.model.Role;
 import com.firstSpring.firstSpring.model.RoleEnum;
 import com.firstSpring.firstSpring.model.UserEntity;
+import com.firstSpring.firstSpring.repository.TokenRepository;
 import com.firstSpring.firstSpring.repository.UserRepository;
 import com.firstSpring.firstSpring.service.AuthService;
 import org.springframework.boot.SpringApplication;
@@ -35,14 +36,14 @@ public class FirstSpringApplication {
             dotenv.entries().forEach(entry
                     -> System.setProperty(entry.getKey(), entry.getValue())
             );
-            LOG.log(Level.INFO, "Variables are loaded correctly!");
+            LOG.log(Level.INFO, "Environment variables loaded correctly!");
         } catch (Exception e) {
-            LOG.log(Level.SEVERE, "Error loading .env: {error}", e.getMessage());
+            LOG.log(Level.SEVERE, "Error loading .env: ".concat(e.getMessage()));
         }
     }
 
     @Bean
-    CommandLineRunner init(UserRepository userRepository, AuthService authService) {
+    CommandLineRunner init(UserRepository userRepository, TokenRepository tokenRepository, AuthService authService) {
         return args -> {
             //Creating permissions
             Permission permissionCreate = Permission.builder()
@@ -92,7 +93,7 @@ public class FirstSpringApplication {
                     .roles(Set.of(roleAdmin, roleDev))
                     .build();
             TokenResponse token = authService.registerTest(user1);
-            user1.setTokens(List.of(authService.createToken(token.getAccesToken())));
+            user1.setTokens(List.of(authService.createToken(user1, token.getAccesToken())));
 
             UserEntity user2 = UserEntity.builder()
                     .name("Isur")
@@ -103,7 +104,7 @@ public class FirstSpringApplication {
                     .roles(Set.of(roleUser))
                     .build();
             TokenResponse token1 = authService.registerTest(user2);
-            user2.setTokens(List.of(authService.createToken(token1.getAccesToken())));
+            user2.setTokens(List.of(authService.createToken(user2, token1.getAccesToken())));
 
             UserEntity user3 = UserEntity.builder()
                     .name("Kristell")
@@ -114,7 +115,7 @@ public class FirstSpringApplication {
                     .roles(Set.of(roleInvited))
                     .build();
             TokenResponse token2 = authService.registerTest(user3);
-            user3.setTokens(List.of(authService.createToken(token2.getAccesToken())));
+            user3.setTokens(List.of(authService.createToken(user3, token2.getAccesToken())));
 
             userRepository.saveAll(List.of(user1, user2, user3));
         };

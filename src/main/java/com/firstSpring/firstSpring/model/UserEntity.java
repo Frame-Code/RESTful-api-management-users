@@ -80,7 +80,7 @@ public class UserEntity implements Serializable{
     private Set<Role> roles;
     
     @PrePersist
-    protected void initiAuditFields() {
+    protected void initAuditFields() {
         createdAt = LocalDate.now();
         deleted = false;
     }
