@@ -103,7 +103,7 @@ public class FirstSpringApplication {
                     .password("pass")
                     .roles(Set.of(roleUser))
                     .build();
-            TokenResponse token1 = authService.registerTest(user2);
+            TokenResponse token1 = authService.registe rTest(user2);
             user2.setTokens(List.of(authService.createToken(user2, token1.getAccesToken())));
 
             UserEntity user3 = UserEntity.builder()

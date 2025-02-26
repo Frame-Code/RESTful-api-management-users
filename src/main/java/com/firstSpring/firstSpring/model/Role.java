@@ -16,8 +16,11 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import java.io.Serializable;
 import java.util.Set;
+
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  *
@@ -27,6 +30,8 @@ import lombok.Data;
 @Table(name = "roles")
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Role implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

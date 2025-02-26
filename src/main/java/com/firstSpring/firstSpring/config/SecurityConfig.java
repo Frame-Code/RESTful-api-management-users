@@ -26,38 +26,39 @@ import org.springframework.security.web.SecurityFilterChain;
  */
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity //Is used to can be use anotations to define the filters (here down the .authorizettpRequest...) in each class and each endpoint but don´t like it, I prefer this option
+@EnableMethodSecurity //Is used to can be use annotations to define the filters (here down the .authorizeHttpRequest...) in each class and each endpoint but don´t like it, I prefer this option
 public class SecurityConfig {
 
-    //HttpSecurity object go to around of all filters from SecurityyFilerChain
+    //HttpSecurity object go to around of all filters from SecurityFilerChain
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 //Filters
-                //Recomended in MVC but not in Rest, because in mvn we working with forms but in rest we workes using JSON
+                //Recommended in MVC but not in Rest, because in mvn we're working with forms but in rest we works using JSON
                 .csrf(csrf -> csrf.disable())
                 .httpBasic(Customizer.withDefaults())
-                //The sesion is managed by the tokens but not the object session on the side of the client (the object sesion is very wight)
-                .sessionManagement(sesion -> sesion.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                //The session is managed by the tokens but not the object session on the side of the client (the object session is very wight)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(http -> {
                     //Configure public endpoints 
                     http.requestMatchers(HttpMethod.GET, "/auth/**").permitAll();
                     http.requestMatchers(HttpMethod.POST, "/auth/**").permitAll();
                     
                     //configure private endpoints
-                    http.requestMatchers(HttpMethod.GET, "/api/users").hasAuthority("READ");
-                    http.requestMatchers(HttpMethod.GET, "/api/users/**").hasAuthority("READ");
-                    http.requestMatchers(HttpMethod.DELETE, "/api/users/**").hasAuthority("CREATE");
+                    //http.requestMatchers(HttpMethod.GET, "/api/users").permitAll();
+                    http.requestMatchers(HttpMethod.GET, "/api/users").hasAnyRole("ADMIN", "USER, DEVELOPER");
+                    http.requestMatchers(HttpMethod.GET, "/api/users/**").hasAnyRole("ADMIN", "DEVELOPER");
+                    http.requestMatchers(HttpMethod.DELETE, "/api/users/**").hasAuthority("DELETE");
 
-                    //configure any endpoints - NOT ESPECIFICIED
+                    //configure any endpoints - NOT SPECIFIED
                     http.anyRequest().denyAll();
                 })
                 .build();
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticacionConfiguration) throws Exception {
-        return authenticacionConfiguration.getAuthenticationManager();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 
     @Bean
