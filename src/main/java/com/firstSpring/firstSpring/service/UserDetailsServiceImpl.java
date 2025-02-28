@@ -13,6 +13,8 @@ import com.firstSpring.firstSpring.repository.UserRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -22,7 +24,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
  */
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
-
+    private static final Logger LOG = Logger.getLogger(UserDetailsServiceImpl.class.getName());
     @Autowired
     private UserRepository userRepository;
 
@@ -30,7 +32,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         //Searching the user on the db
         UserEntity userEntity = userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Email not found"));
+                .orElseThrow(() -> {
+                    LOG.log(Level.WARNING, "Email not found");
+                    return new UsernameNotFoundException("Email not found");
+                });
 
         //Definicion de una lista con el objeto que representa el rol y permiso del usuario (Clase que entiende el contexto de spring)
         List<SimpleGrantedAuthority> authorityList = new ArrayList<>();

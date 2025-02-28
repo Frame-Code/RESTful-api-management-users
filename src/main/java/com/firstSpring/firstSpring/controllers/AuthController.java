@@ -29,23 +29,23 @@ public class AuthController {
 
     @GetMapping("/test")
     public String test() {
-        return "Hello world";
+        return "Test successfully";
     }
 
     @PostMapping("/login")
-    public ResponseEntity<TokenResponse> authenticate(@RequestBody final UserLogin userDTO) {
-        final TokenResponse token = authService.login(userDTO);
-        return ResponseEntity.ok(token);
+    public ResponseEntity<?> authenticate(@RequestBody final UserLogin userDTO) {
+        return authService.login(userDTO);
     }
 
+    /*
     @PostMapping("/register")
     public ResponseEntity<TokenResponse> register(@RequestBody final UserRegister userRegister) {
-        final TokenResponse token = authService.register(userRegister);
+        TokenResponse token = authService.register(userRegister);
         return ResponseEntity.ok(token);
     }
 
     @PostMapping("/refresh")
     public TokenResponse refreshToken(@RequestHeader(HttpHeaders.AUTHORIZATION) final String authHeader) {
         return authService.refreshToken(authHeader);
-    }
+    }*/
 }

@@ -1,7 +1,10 @@
 package com.firstSpring.firstSpring.config;
 
+import com.firstSpring.firstSpring.config.filter.JwtTokenValidator;
 import com.firstSpring.firstSpring.service.UserDetailsServiceImpl;
 
+import com.firstSpring.firstSpring.utils.JwtUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -19,6 +22,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 /**
  *
@@ -28,6 +32,10 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 @EnableMethodSecurity //Is used to can be use annotations to define the filters (here down the .authorizeHttpRequest...) in each class and each endpoint but don´t like it, I prefer this option
 public class SecurityConfig {
+
+    @Autowired
+    private JwtUtils jwtUtils;
+
 
     //HttpSecurity object go to around of all filters from SecurityFilerChain
     @Bean
@@ -53,6 +61,7 @@ public class SecurityConfig {
                     //configure any endpoints - NOT SPECIFIED
                     http.anyRequest().denyAll();
                 })
+                .addFilterBefore(new JwtTokenValidator(jwtUtils), BasicAuthenticationFilter.class)
                 .build();
     }
 
