@@ -31,12 +31,14 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         //Searching the user on the db
-        UserEntity userEntity = userRepository.findByEmail(username)
-                .orElseThrow(() -> {
-                    LOG.log(Level.WARNING, "Email not found");
-                    return new UsernameNotFoundException("Email not found");
-                });
+        Optional<UserEntity> userOpt = userRepository.findByEmail(username);
 
+        if (userOpt.isEmpty()) {
+            LOG.log(Level.WARNING, "Email not found");
+            return null;
+        }
+
+        UserEntity userEntity = userOpt.get();
         //Definicion de una lista con el objeto que representa el rol y permiso del usuario (Clase que entiende el contexto de spring)
         List<SimpleGrantedAuthority> authorityList = new ArrayList<>();
 

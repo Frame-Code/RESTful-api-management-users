@@ -1,6 +1,8 @@
 package com.firstSpring.firstSpring.config;
 
 import com.firstSpring.firstSpring.config.filter.JwtTokenValidator;
+import com.firstSpring.firstSpring.model.PermissionsEnum;
+import com.firstSpring.firstSpring.model.RoleEnum;
 import com.firstSpring.firstSpring.service.UserDetailsServiceImpl;
 
 import com.firstSpring.firstSpring.utils.JwtUtils;
@@ -53,10 +55,12 @@ public class SecurityConfig {
                     http.requestMatchers(HttpMethod.POST, "/auth/**").permitAll();
                     
                     //configure private endpoints
-                    http.requestMatchers(HttpMethod.GET, "/api/users").permitAll();
-                    //http.requestMatchers(HttpMethod.GET, "/api/users").hasAnyRole("ADMIN", "USER, DEVELOPER");
-                    http.requestMatchers(HttpMethod.GET, "/api/users/**").hasAnyRole("ADMIN", "DEVELOPER");
-                    http.requestMatchers(HttpMethod.DELETE, "/api/users/**").hasAuthority("DELETE");
+                    http.requestMatchers(HttpMethod.GET, "/api/users").hasAnyRole(
+                            RoleEnum.ADMIN.name(), RoleEnum.USER.name(), RoleEnum.DEVELOPER.name());
+                    http.requestMatchers(HttpMethod.GET, "/api/users/**").hasAnyRole(
+                            RoleEnum.ADMIN.name(), RoleEnum.DEVELOPER.name());
+                    http.requestMatchers(HttpMethod.DELETE, "/api/users/**").hasAuthority(
+                            PermissionsEnum.DELETE.name());
 
                     //configure any endpoints - NOT SPECIFIED
                     http.anyRequest().denyAll();
