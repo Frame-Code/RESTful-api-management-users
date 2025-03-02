@@ -53,8 +53,8 @@ public class SecurityConfig {
                     http.requestMatchers(HttpMethod.POST, "/auth/**").permitAll();
                     
                     //configure private endpoints
-                    //http.requestMatchers(HttpMethod.GET, "/api/users").permitAll();
-                    http.requestMatchers(HttpMethod.GET, "/api/users").hasAnyRole("ADMIN", "USER, DEVELOPER");
+                    http.requestMatchers(HttpMethod.GET, "/api/users").permitAll();
+                    //http.requestMatchers(HttpMethod.GET, "/api/users").hasAnyRole("ADMIN", "USER, DEVELOPER");
                     http.requestMatchers(HttpMethod.GET, "/api/users/**").hasAnyRole("ADMIN", "DEVELOPER");
                     http.requestMatchers(HttpMethod.DELETE, "/api/users/**").hasAuthority("DELETE");
 

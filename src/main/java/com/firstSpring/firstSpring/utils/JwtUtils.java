@@ -3,10 +3,12 @@ package com.firstSpring.firstSpring.utils;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -14,13 +16,16 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
 public class JwtUtils {
-
+    private static final Logger LOG = Logger.getLogger(JwtUtils.class.getName());
     @Value("${security.jwt.secret-key}")
     private String privateKey;
 
@@ -33,7 +38,7 @@ public class JwtUtils {
     @Value("${security.jwt.refresh-token}")
     private long expirationRefreshToken;
 
-    public String createToken(Authentication authentication) {
+    public Optional<String> createToken(@NotNull Authentication authentication) {
         Algorithm algorithm = Algorithm.HMAC256(this.privateKey);
 
         String username = authentication.getPrincipal().toString();
@@ -44,7 +49,7 @@ public class JwtUtils {
         return buildToken(username, authorities, algorithm, this.expirationToken);
     }
 
-    public String createRefreshToken(Authentication authentication) {
+    public Optional<String> createRefreshToken(Authentication authentication) {
         Algorithm algorithm = Algorithm.HMAC256(this.privateKey);
 
         String username = authentication.getPrincipal().toString();
@@ -54,16 +59,21 @@ public class JwtUtils {
         return buildToken(username, authorities, algorithm, this.expirationRefreshToken);
     }
 
-    private String buildToken(String username, String authorities, Algorithm algorithm, long expiration) {
-        return JWT.create()
-                .withIssuer(this.userGenerator)
-                .withSubject(username)
-                .withClaim("authorities", authorities)
-                .withIssuedAt(new Date())
-                .withExpiresAt(new Date(System.currentTimeMillis() + expiration))
-                .withJWTId(UUID.randomUUID().toString())
-                .withNotBefore(new Date(System.currentTimeMillis()))
-                .sign(algorithm);
+    private Optional<String> buildToken(String username, String authorities, Algorithm algorithm, long expiration) {
+        try {
+            return Optional.of(JWT.create()
+                    .withIssuer(this.userGenerator)
+                    .withSubject(username)
+                    .withClaim("authorities", authorities)
+                    .withIssuedAt(new Date())
+                    .withExpiresAt(new Date(System.currentTimeMillis() + expiration))
+                    .withJWTId(UUID.randomUUID().toString())
+                    .withNotBefore(new Date(System.currentTimeMillis()))
+                    .sign(algorithm));
+        } catch (JWTCreationException exception) {
+            LOG.log(Level.SEVERE, "Error creating the token: INVALID CONFIGURATION OR COULDN'T CONVERT CLAIMS");
+            return Optional.empty();
+        }
     }
 
     public DecodedJWT validateToken(String token) {
@@ -72,8 +82,9 @@ public class JwtUtils {
             JWTVerifier verifier = JWT.require(algorithm)
                     .withIssuer(this.userGenerator)
                     .build();
-            return verifier.verify(token); //If the token is valid, that return a object DecodedJWT
+            return verifier.verify(token); //If the token is valid, that return an object DecodedJWT
         } catch (JWTVerificationException exception) {
+            LOG.log(Level.SEVERE, "Error verifying the token");
             throw new JWTVerificationException("Token invalid, not authorized");
         }
     }

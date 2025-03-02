@@ -19,10 +19,12 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @RequiredArgsConstructor
 public class JwtTokenValidator extends OncePerRequestFilter {
-
+    private static final Logger LOG = Logger.getLogger(JwtTokenValidator.class.getName());
     private final JwtUtils jwtUtils;
 
     @Override
@@ -32,6 +34,7 @@ public class JwtTokenValidator extends OncePerRequestFilter {
         String jwtToken = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         if(jwtToken == null || jwtToken.isBlank() || !jwtToken.startsWith("Bearer")) {
+            LOG.log(Level.INFO, "No token identified");
             filterChain.doFilter(request, response);
             return;
         }
@@ -40,8 +43,9 @@ public class JwtTokenValidator extends OncePerRequestFilter {
 
         DecodedJWT decodedJWT = jwtUtils.validateToken(jwtToken);
 
+
         String username = jwtUtils.extracUsername(decodedJWT);
-        String authorities = jwtUtils.getSpecificClaim(decodedJWT, "Authorities").asString();
+        String authorities = jwtUtils.getSpecificClaim(decodedJWT, "authorities").asString();
 
         Collection<? extends GrantedAuthority> authoritiesCollect = AuthorityUtils.commaSeparatedStringToAuthorityList(authorities);
 
@@ -50,7 +54,6 @@ public class JwtTokenValidator extends OncePerRequestFilter {
         SecurityContext context = SecurityContextHolder.getContext();
         context.setAuthentication(authentication);
         SecurityContextHolder.setContext(context);
-
         filterChain.doFilter(request, response);
     }
 }
