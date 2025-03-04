@@ -1,6 +1,5 @@
 package com.firstSpring.firstSpring.controllers;
 
-import com.firstSpring.firstSpring.dto.TokenResponse;
 import com.firstSpring.firstSpring.dto.UserLogin;
 import com.firstSpring.firstSpring.dto.UserRegister;
 import com.firstSpring.firstSpring.service.AuthService;
@@ -8,11 +7,9 @@ import com.firstSpring.firstSpring.service.AuthService;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,9 +29,14 @@ public class AuthController {
         return "Test successfully";
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> authenticate(@RequestBody final UserLogin userDTO) {
+    @PostMapping("/log-in")
+    public ResponseEntity<?> login(@RequestBody final UserLogin userDTO) {
         return authService.login(userDTO);
+    }
+
+    @PostMapping("/sign-up")
+    public ResponseEntity<?> register(@RequestBody final UserRegister userDTO) {
+        return authService.register(userDTO);
     }
 
     /*

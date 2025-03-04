@@ -1,20 +1,12 @@
 
 package com.firstSpring.firstSpring.model;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Set;
 
 import lombok.AllArgsConstructor;
@@ -49,4 +41,18 @@ public class Role implements Serializable{
             inverseJoinColumns = @JoinColumn(name = "permission_id")
     )
     private Set<Permission> permissions;
+
+    @JsonIgnore
+    @Column(name = "is_deleted", nullable = false)
+    private boolean deleted;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @Temporal(TemporalType.DATE)
+    private LocalDate createdAt;
+
+    @PrePersist
+    protected void initAuditFields() {
+        createdAt = LocalDate.now();
+        deleted = false;
+    }
 }

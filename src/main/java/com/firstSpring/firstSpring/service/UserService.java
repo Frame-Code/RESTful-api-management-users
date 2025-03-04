@@ -33,6 +33,7 @@ public class UserService {
 
     public Optional<UserResponse> findById(Long id) {
         Optional<UserEntity> userOpt = userRepository.findByIdActive(id);
+
         if(userOpt.isPresent()) {
             return Optional.of(userMapper.toUserResponse(userOpt.get()));
         }
