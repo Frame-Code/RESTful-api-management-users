@@ -7,6 +7,7 @@ import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.firstSpring.firstSpring.model.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
@@ -101,5 +102,12 @@ public class JwtUtils {
         return decodedJWT.getClaims();
     }
 
+    public boolean isTokenValid(final DecodedJWT decodedJWT, final UserEntity user) {
+        final String email = extracUsername(decodedJWT);
+        return user.getEmail().equals(email) && !isTokenExpired(decodedJWT);
+    }
 
+    public boolean isTokenExpired(DecodedJWT decodedJWT) {
+        return decodedJWT.getExpiresAt().before(new Date());
+    }
 }

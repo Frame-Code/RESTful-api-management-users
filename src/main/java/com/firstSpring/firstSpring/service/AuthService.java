@@ -1,5 +1,6 @@
 package com.firstSpring.firstSpring.service;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.firstSpring.firstSpring.dto.TokenResponse;
 import com.firstSpring.firstSpring.dto.UserLogin;
 import com.firstSpring.firstSpring.dto.UserRegister;
@@ -12,10 +13,7 @@ import com.firstSpring.firstSpring.repository.TokenRepository;
 import com.firstSpring.firstSpring.repository.UserRepository;
 import com.firstSpring.firstSpring.service.mappers.UserMapper;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,6 +26,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -89,7 +89,7 @@ public class AuthService {
     }
 
     public ResponseEntity<?> register(@NotNull UserRegister userRegister) {
-        if(userRepository.findByEmail(userRegister.getEmail()).isPresent()) {
+        if (userRepository.findByEmail(userRegister.getEmail()).isPresent()) {
             LOG.log(Level.SEVERE, "The user with the email " + userRegister.getEmail() + "already exists");
             return ResponseEntity.status(HttpStatus.CONFLICT).body("The user with the email " + userRegister.getEmail() + "already exists");
         }
@@ -138,7 +138,7 @@ public class AuthService {
         Optional<String> jwtToken = jwtUtils.createToken(authentication);
         Optional<String> refreshToken = jwtUtils.createRefreshToken(authentication);
 
-        if(jwtToken.isEmpty() || refreshToken.isEmpty()) {
+        if (jwtToken.isEmpty() || refreshToken.isEmpty()) {
             LOG.log(Level.SEVERE, "Error creating the token");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating the token");
         }
@@ -147,8 +147,55 @@ public class AuthService {
         return ResponseEntity.ok().body(new TokenResponse(jwtToken.get(), refreshToken.get()));
     }
 
-    public TokenResponse refreshToken(String authHeader) {
-        return null;
+    public ResponseEntity<?> refreshToken(final String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            LOG.log(Level.WARNING, "Invalid bearer token");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid bearer token");
+        }
+
+        final String refreshToken = authHeader.substring(7);
+        DecodedJWT decode = jwtUtils.validateToken(refreshToken);
+
+        final String userEmail = jwtUtils.extracUsername(decode);
+
+        if (userEmail == null) {
+            LOG.log(Level.WARNING, "Invalid refresh token");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid refresh token");
+        }
+
+        Optional<UserEntity> user = userRepository.findByEmail(userEmail);
+
+        if (user.isEmpty()) {
+            LOG.log(Level.WARNING, "User not found");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found");
+        }
+
+        if (!jwtUtils.isTokenValid(decode, user.get())) {
+            LOG.log(Level.WARNING, "Invalid refresh token");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid refresh token");
+        }
+
+        String authorities = jwtUtils.getSpecificClaim(decode, "authorities").asString();
+        Collection<? extends GrantedAuthority> authoritiesCollect = AuthorityUtils.commaSeparatedStringToAuthorityList(authorities);
+
+        Authentication auth = new UsernamePasswordAuthenticationToken(
+                user.get().getEmail(),
+                null,
+                authoritiesCollect
+        );
+
+        Optional<String> accessToken = jwtUtils.createToken(auth);
+        Optional<String> refreshTokenFinal = jwtUtils.createRefreshToken(auth);
+
+        if(accessToken.isEmpty() || refreshTokenFinal.isEmpty()) {
+            LOG.log(Level.SEVERE, "Error creating tokens");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating tokens");
+        }
+
+        revokeAllTokens(user.get());
+        saveUserToken(user.get(), accessToken.get());
+        return ResponseEntity.ok(new TokenResponse(accessToken.get(), refreshTokenFinal.get()));
+
     }
 
     private void saveUserToken(UserEntity user, String jwtToken) {
@@ -167,13 +214,16 @@ public class AuthService {
     private void revokeAllTokens(UserEntity user) {
         Optional<UserEntity> userOpt = userRepository.findByEmail(user.getEmail());
         userOpt.ifPresent(userEntity -> {
-            userEntity.getTokens().forEach(token -> token.setRevoked(true));
+            userEntity.getTokens().forEach(token -> {
+                token.setRevoked(true);
+                token.setExpired(true);
+            });
             userRepository.saveAndFlush(userEntity);
         });
     }
 
     /***********************METHODS USED TO ADD USERS ON THE DB WHEN THE APPLICATION IS CHARGING*******************
-    *************************************USED IN THE MAIN CLASS***************************************************/
+     *************************************USED IN THE MAIN CLASS***************************************************/
     public TokenResponse registerTest(UserEntity user) {
         user.setPassword(passwordEncoder.encode(user.getPassword())); //Le setea la constraseña encriptada
         List<SimpleGrantedAuthority> authorityList = new ArrayList<>();
