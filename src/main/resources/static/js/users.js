@@ -26,17 +26,15 @@ async function deleteUser(id) {
 }
 
 async function loadUsers() {
+    const token = localStorage.getItem("access_token");
     const response = await fetch('http://localhost:8080/api/users', {
         method: 'GET',
         headers: {
             'Accept': 'application/json',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
         }
     });
-
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }
 
     const users = await response.json();
 

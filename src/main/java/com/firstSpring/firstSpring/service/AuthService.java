@@ -103,6 +103,7 @@ public class AuthService {
                 .map(role -> role.getRoleEnum().name())
                 .toList();
 
+
         List<String> userRoles = userRegister.getRolesRegister().getRoleListName().stream()
                 .filter(roles::contains)
                 .map(String::toUpperCase)

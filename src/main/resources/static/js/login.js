@@ -8,7 +8,7 @@ async function login() {
         password: d.querySelector("#exampleInputPassword").value
     };
 
-    const request = await fetch("http://localhost:8080/auth", {
+    const request = await fetch("http://localhost:8080/auth/log-in", {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
@@ -17,17 +17,10 @@ async function login() {
         body: JSON.stringify(data)
     });
 
-    const response = await request.text();
-    /*
-     if(!response.ok) {
-     throw new Error(`Http error, status: ${response.status}`);
-     }*/
-    
-    if (response.toString() === "ok") {
-        alert("Login succesfully");
-        window.location.replace("./users.html");
-    } else {
-        alert("User not found");
-    }
+    const response = await request.json();
 
+    localStorage.setItem("access_token", response.access_token);
+    localStorage.setItem("refresh_token", response.refresh_token);
+
+    window.location.replace("./users.html");
 }

@@ -27,12 +27,12 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 /**
- *
  * @author Artist-Code
  */
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity //Is used to can be use annotations to define the filters (here down the .authorizeHttpRequest...) in each class and each endpoint but don´t like it, I prefer this option
+@EnableMethodSecurity
+//Is used to can be use annotations to define the filters (here down the .authorizeHttpRequest...) in each class and each endpoint but don´t like it, I prefer this option
 public class SecurityConfig {
 
     @Autowired
@@ -46,14 +46,23 @@ public class SecurityConfig {
                 //Filters
                 //Recommended in MVC but not in Rest, because in mvn we're working with forms but in rest we works using JSON
                 .csrf(csrf -> csrf.disable())
-                .httpBasic(Customizer.withDefaults())
+                //.httpBasic(Customizer.withDefaults())
                 //The session is managed by the tokens but not the object session on the side of the client (the object session is very wight)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(http -> {
-                    //Configure public endpoints 
+                    //Configure public endpoints
+                    http.requestMatchers(
+                            "/static/**",
+                            "/css/**",
+                            "/img/**",
+                            "/js/**",
+                            "/META-INF/**",
+                            "/scss/**",
+                            "/vendor/**",
+                            "/WEB-INF/**").permitAll();
                     http.requestMatchers(HttpMethod.GET, "/auth/**").permitAll();
                     http.requestMatchers(HttpMethod.POST, "/auth/**").permitAll();
-                    
+
                     //configure private endpoints
                     http.requestMatchers(HttpMethod.GET, "/api/users").hasAnyRole(
                             RoleEnum.ADMIN.name(), RoleEnum.USER.name(), RoleEnum.DEVELOPER.name(), RoleEnum.INVITED.name());
@@ -64,6 +73,10 @@ public class SecurityConfig {
 
                     //configure any endpoints - NOT SPECIFIED
                     http.anyRequest().denyAll();
+                })
+                .formLogin(form -> {
+                    form.loginPage("/login.html");
+                    form.loginProcessingUrl("auth/log-in").permitAll();
                 })
                 .addFilterBefore(new JwtTokenValidator(jwtUtils), BasicAuthenticationFilter.class)
                 .build();

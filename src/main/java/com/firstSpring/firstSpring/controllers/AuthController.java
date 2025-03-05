@@ -21,7 +21,6 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
-
     @PostMapping("/log-in")
     public ResponseEntity<?> login(@RequestBody final UserLogin userDTO) {
         return authService.login(userDTO);
