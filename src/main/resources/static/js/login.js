@@ -22,5 +22,17 @@ async function login() {
     localStorage.setItem("access_token", response.access_token);
     localStorage.setItem("refresh_token", response.refresh_token);
 
-    window.location.replace("./users.html");
+
+    /*const requestToUsers = await fetch("http://localhost:8080/users.html", {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem("access_token")}`
+        }
+    });*/
+    window.location.replace(fetch("http://localhost:8080/users.html", {
+                                    method: 'GET',
+                                    headers: {
+                                        'Authorization': `Bearer ${localStorage.getItem("access_token")}`
+                                    }
+                                }).url);
 }

@@ -25,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 
 /**
  * @author Artist-Code
@@ -47,6 +48,7 @@ public class SecurityConfig {
                 //Recommended in MVC but not in Rest, because in mvn we're working with forms but in rest we works using JSON
                 .csrf(csrf -> csrf.disable())
                 //.httpBasic(Customizer.withDefaults())
+                .cors(Customizer.withDefaults())
                 //The session is managed by the tokens but not the object session on the side of the client (the object session is very wight)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(http -> {
@@ -59,13 +61,19 @@ public class SecurityConfig {
                             "/META-INF/**",
                             "/scss/**",
                             "/vendor/**",
-                            "/WEB-INF/**").permitAll();
+                            "/WEB-INF/**",
+                            "/login.html",
+                            "/register.html").permitAll();
                     http.requestMatchers(HttpMethod.GET, "/auth/**").permitAll();
                     http.requestMatchers(HttpMethod.POST, "/auth/**").permitAll();
 
                     //configure private endpoints
-                    http.requestMatchers(HttpMethod.GET, "/api/users").hasAnyRole(
-                            RoleEnum.ADMIN.name(), RoleEnum.USER.name(), RoleEnum.DEVELOPER.name(), RoleEnum.INVITED.name());
+                    http.requestMatchers("/index.html").hasAnyRole(
+                            RoleEnum.ADMIN.name(), RoleEnum.USER.name(), RoleEnum.INVITED.name(), RoleEnum.DEVELOPER.name());
+                    http.requestMatchers("/users.html").hasAnyRole(
+                            RoleEnum.ADMIN.name(), RoleEnum.USER.name(), RoleEnum.DEVELOPER.name());
+                    http.requestMatchers(HttpMethod.GET, "/api/users" ).hasAnyRole(
+                            RoleEnum.ADMIN.name(), RoleEnum.USER.name(), RoleEnum.DEVELOPER.name());
                     http.requestMatchers(HttpMethod.GET, "/api/users/**").hasAnyRole(
                             RoleEnum.ADMIN.name(), RoleEnum.DEVELOPER.name());
                     http.requestMatchers(HttpMethod.DELETE, "/api/users/**").hasAuthority(

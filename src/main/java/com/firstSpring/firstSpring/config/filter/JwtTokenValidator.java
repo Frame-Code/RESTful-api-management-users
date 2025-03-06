@@ -1,5 +1,6 @@
 package com.firstSpring.firstSpring.config.filter;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.firstSpring.firstSpring.utils.JwtUtils;
 import jakarta.servlet.FilterChain;
@@ -13,7 +14,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -32,29 +32,35 @@ public class JwtTokenValidator extends OncePerRequestFilter {
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
         String jwtToken = request.getHeader(HttpHeaders.AUTHORIZATION);
+        LOG.log(Level.INFO, "Full url: " +  request.getRequestURL().toString());
 
-        if(jwtToken == null || jwtToken.isBlank() || !jwtToken.startsWith("Bearer")) {
+        if(jwtToken == null || jwtToken.isBlank() || !jwtToken.startsWith("Bearer ")) {
             LOG.log(Level.INFO, "No token identified");
             filterChain.doFilter(request, response);
             return;
         }
-
+        LOG.log(Level.INFO, "Token identified");
+        LOG.log(Level.INFO, "token: " +  request.getHeader(HttpHeaders.AUTHORIZATION));
         jwtToken = jwtToken.substring(7);
+        try {
+            DecodedJWT decodedJWT = jwtUtils.validateToken(jwtToken);
+            LOG.log(Level.INFO, "Token valid");
 
-        DecodedJWT decodedJWT = jwtUtils.validateToken(jwtToken);
+            String username = jwtUtils.extracUsername(decodedJWT);
+            String authorities = jwtUtils.getSpecificClaim(decodedJWT, "authorities").asString();
 
+            Collection<? extends GrantedAuthority> authoritiesCollect = AuthorityUtils.commaSeparatedStringToAuthorityList(authorities);
 
-        String username = jwtUtils.extracUsername(decodedJWT);
-        String authorities = jwtUtils.getSpecificClaim(decodedJWT, "authorities").asString();
+            Authentication authentication = new UsernamePasswordAuthenticationToken(username, null, authoritiesCollect);
 
-        Collection<? extends GrantedAuthority> authoritiesCollect = AuthorityUtils.commaSeparatedStringToAuthorityList(authorities);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            LOG.log(Level.INFO, "User saved in the Spring context");
+            filterChain.doFilter(request, response);
 
-        Authentication authentication = new UsernamePasswordAuthenticationToken(username, null, authoritiesCollect);
-
-        SecurityContext context = SecurityContextHolder.getContext();
-        context.setAuthentication(authentication);
-        SecurityContextHolder.setContext(context);
-
-        filterChain.doFilter(request, response);
+        } catch (JWTVerificationException e) {
+            LOG.log(Level.SEVERE, "Error verifying the token " + e.getMessage());
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
     }
 }

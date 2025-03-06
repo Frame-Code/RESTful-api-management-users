@@ -77,17 +77,12 @@ public class JwtUtils {
         }
     }
 
-    public DecodedJWT validateToken(String token) {
-        try {
-            Algorithm algorithm = Algorithm.HMAC256(this.privateKey);
-            JWTVerifier verifier = JWT.require(algorithm)
-                    .withIssuer(this.userGenerator)
-                    .build();
-            return verifier.verify(token); //If the token is valid, that return an object DecodedJWT
-        } catch (JWTVerificationException exception) {
-            LOG.log(Level.SEVERE, "Error verifying the token");
-            throw new JWTVerificationException("Token invalid, not authorized");
-        }
+    public DecodedJWT validateToken(String token) throws JWTVerificationException{
+        Algorithm algorithm = Algorithm.HMAC256(this.privateKey);
+        JWTVerifier verifier = JWT.require(algorithm)
+                .withIssuer(this.userGenerator)
+                .build();
+        return verifier.verify(token); //If the token is valid, that return an object DecodedJWT
     }
 
     public String extracUsername(DecodedJWT decodedJWT) {

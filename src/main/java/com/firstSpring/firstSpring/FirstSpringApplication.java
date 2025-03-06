@@ -93,7 +93,7 @@ public class FirstSpringApplication {
                     .roles(Set.of(roleAdmin, roleDev))
                     .build();
             TokenResponse token = authService.registerTest(user1);
-            user1.setTokens(List.of(authService.createToken(user1, token.getAccesToken())));
+            user1.setTokens(List.of(authService.createToken(user1, token.getAccess_token())));
 
             UserEntity user2 = UserEntity.builder()
                     .name("Isur")
@@ -104,7 +104,7 @@ public class FirstSpringApplication {
                     .roles(Set.of(roleUser))
                     .build();
             TokenResponse token1 = authService.registerTest(user2);
-            user2.setTokens(List.of(authService.createToken(user2, token1.getAccesToken())));
+            user2.setTokens(List.of(authService.createToken(user2, token1.getAccess_token())));
 
             UserEntity user3 = UserEntity.builder()
                     .name("Kristell")
@@ -115,7 +115,7 @@ public class FirstSpringApplication {
                     .roles(Set.of(roleInvited))
                     .build();
             TokenResponse token2 = authService.registerTest(user3);
-            user3.setTokens(List.of(authService.createToken(user3, token2.getAccesToken())));
+            user3.setTokens(List.of(authService.createToken(user3, token2.getAccess_token())));
 
             userRepository.saveAll(List.of(user1, user2, user3));
         };
