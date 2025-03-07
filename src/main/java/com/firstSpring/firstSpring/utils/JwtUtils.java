@@ -46,7 +46,6 @@ public class JwtUtils {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(",")); //Delimiting each authority with a comma
-
         return buildToken(username, authorities, algorithm, this.expirationToken);
     }
 
@@ -56,7 +55,7 @@ public class JwtUtils {
         String username = authentication.getPrincipal().toString();
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(""));
+                .collect(Collectors.joining(","));
         return buildToken(username, authorities, algorithm, this.expirationRefreshToken);
     }
 

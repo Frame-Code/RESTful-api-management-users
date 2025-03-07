@@ -81,6 +81,7 @@ public class AuthService {
             revokeAllTokens(userMapper.toEntity(userDTO));
             saveUserToken(userRepository.findByEmail(userDTO.getEmail()).get(), jwtToken.get());
             LOG.log(Level.INFO, "User: " + userDetails.getUsername() + " with the following authorities: " + userDetails.getAuthorities().toString() + " logged successfully");
+
             return ResponseEntity.ok(new TokenResponse(jwtToken.get(), refreshToken.get()));
         } catch (AuthenticationException e) {
             LOG.log(Level.SEVERE, e.getMessage(), "Invalid credentials");

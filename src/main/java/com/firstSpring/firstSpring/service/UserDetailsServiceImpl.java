@@ -50,6 +50,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .flatMap(role -> role.getPermissions().stream())
                 .forEach(permission -> authorityList.add(new SimpleGrantedAuthority(permission.getPermissionEnum().name())));
 
+
         return new User(
                 userEntity.getEmail(),
                 userEntity.getPassword(),

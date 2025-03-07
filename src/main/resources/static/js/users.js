@@ -5,6 +5,11 @@ $(document).ready(function () {
     $('#usersTable').DataTable();
 });
 
+function logout() {
+    document.cookie = "access_token=; Path=/; Max-Age=0";
+    document.cookie = "refresh_token=; Path=/; Max-Age=0";
+}
+
 async function deleteUser(id) {
     if(!confirm('Do yo want to delete the user selected?')) {
         return;
@@ -26,14 +31,12 @@ async function deleteUser(id) {
 }
 
 async function loadUsers() {
-    const token = localStorage.getItem('access_token');
 
     const response = await fetch('http://localhost:8080/api/users', {
         method: 'GET',
         headers: {
             'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+            'Content-Type': 'application/json'
         }
     });
 

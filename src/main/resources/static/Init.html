@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+    <body>
+        <script>
+            //The following code was provided by chatgpt :)
+            function getCookie(name) {
+                const value = `; ${document.cookie}`;
+                const parts = value.split(`; ${name}=`);
+                if (parts.length === 2) return parts.pop().split(';').shift();
+            }
+
+            const token = getCookie("access_token");
+
+            if (token) {
+                window.location.replace("/users.html");
+            } else {
+                window.location.replace("/login.html");
+            }
+        </script>
+    </body>
+</html>

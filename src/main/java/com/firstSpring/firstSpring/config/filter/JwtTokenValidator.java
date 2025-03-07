@@ -5,6 +5,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.firstSpring.firstSpring.utils.JwtUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -31,26 +32,34 @@ public class JwtTokenValidator extends OncePerRequestFilter {
     protected void doFilterInternal(@NonNull HttpServletRequest request,
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
-        String jwtToken = request.getHeader(HttpHeaders.AUTHORIZATION);
-        LOG.log(Level.INFO, "Full url: " +  request.getRequestURL().toString());
+        String jwtToken = null;
 
-        if(jwtToken == null || jwtToken.isBlank() || !jwtToken.startsWith("Bearer ")) {
-            LOG.log(Level.INFO, "No token identified");
+        if(request.getCookies() == null) {
+            LOG.log(Level.INFO, "No cookies identified");
             filterChain.doFilter(request, response);
             return;
         }
-        LOG.log(Level.INFO, "Token identified");
-        LOG.log(Level.INFO, "token: " +  request.getHeader(HttpHeaders.AUTHORIZATION));
-        jwtToken = jwtToken.substring(7);
+
+        for(Cookie cookie : request.getCookies()) {
+            if(cookie.getName().equals("access_token")) {
+                jwtToken = cookie.getValue();
+            }
+        }
+
+        if(jwtToken == null || jwtToken.isBlank()) {
+            LOG.log(Level.INFO, "No token from the cookies identified");
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        LOG.log(Level.INFO, "Token identified ");
         try {
             DecodedJWT decodedJWT = jwtUtils.validateToken(jwtToken);
             LOG.log(Level.INFO, "Token valid");
 
             String username = jwtUtils.extracUsername(decodedJWT);
             String authorities = jwtUtils.getSpecificClaim(decodedJWT, "authorities").asString();
-
             Collection<? extends GrantedAuthority> authoritiesCollect = AuthorityUtils.commaSeparatedStringToAuthorityList(authorities);
-
             Authentication authentication = new UsernamePasswordAuthenticationToken(username, null, authoritiesCollect);
 
             SecurityContextHolder.getContext().setAuthentication(authentication);

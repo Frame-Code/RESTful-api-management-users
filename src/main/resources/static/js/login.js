@@ -18,21 +18,10 @@ async function login() {
     });
 
     const response = await request.json();
+    console.log(response.access_token);
+    console.log(response.refresh_token);
 
-    localStorage.setItem("access_token", response.access_token);
-    localStorage.setItem("refresh_token", response.refresh_token);
-
-
-    /*const requestToUsers = await fetch("http://localhost:8080/users.html", {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem("access_token")}`
-        }
-    });*/
-    window.location.replace(fetch("http://localhost:8080/users.html", {
-                                    method: 'GET',
-                                    headers: {
-                                        'Authorization': `Bearer ${localStorage.getItem("access_token")}`
-                                    }
-                                }).url);
+    d.cookie = `access_token=${response.access_token}; Path=/; SameSite=Lax`;
+    d.cookie = `refresh_token=${response.refresh_token}; Path=/; SameSite=Lax`;
+    window.location.replace("http://localhost:8080/users.html");
 }

@@ -62,6 +62,7 @@ public class SecurityConfig {
                             "/scss/**",
                             "/vendor/**",
                             "/WEB-INF/**",
+                            "/Init.html",
                             "/login.html",
                             "/register.html").permitAll();
                     http.requestMatchers(HttpMethod.GET, "/auth/**").permitAll();
@@ -83,7 +84,7 @@ public class SecurityConfig {
                     http.anyRequest().denyAll();
                 })
                 .formLogin(form -> {
-                    form.loginPage("/login.html");
+                    form.loginPage("/Init.html");
                     form.loginProcessingUrl("auth/log-in").permitAll();
                 })
                 .addFilterBefore(new JwtTokenValidator(jwtUtils), BasicAuthenticationFilter.class)
