@@ -39,32 +39,33 @@ public class JwtUtils {
     @Value("${security.jwt.refresh-token}")
     private long expirationRefreshToken;
 
-    public Optional<String> createToken(@NotNull Authentication authentication) {
+    public Optional<String> createToken(@NotNull Authentication authentication, String namesUser) {
         Algorithm algorithm = Algorithm.HMAC256(this.privateKey);
 
         String username = authentication.getPrincipal().toString();
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(",")); //Delimiting each authority with a comma
-        return buildToken(username, authorities, algorithm, this.expirationToken);
+        return buildToken(username, authorities, algorithm, namesUser, this.expirationToken);
     }
 
-    public Optional<String> createRefreshToken(Authentication authentication) {
+    public Optional<String> createRefreshToken(Authentication authentication, String namesUser) {
         Algorithm algorithm = Algorithm.HMAC256(this.privateKey);
 
         String username = authentication.getPrincipal().toString();
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
-        return buildToken(username, authorities, algorithm, this.expirationRefreshToken);
+        return buildToken(username, authorities, algorithm, namesUser, this.expirationRefreshToken);
     }
 
-    private Optional<String> buildToken(String username, String authorities, Algorithm algorithm, long expiration) {
+    private Optional<String> buildToken(String username, String authorities, Algorithm algorithm, String namesUser,long expiration) {
         try {
             return Optional.of(JWT.create()
                     .withIssuer(this.userGenerator)
                     .withSubject(username)
                     .withClaim("authorities", authorities)
+                    .withClaim("username", namesUser)
                     .withIssuedAt(new Date())
                     .withExpiresAt(new Date(System.currentTimeMillis() + expiration))
                     .withJWTId(UUID.randomUUID().toString())

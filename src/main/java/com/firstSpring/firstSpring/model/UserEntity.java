@@ -85,4 +85,8 @@ public class UserEntity implements Serializable{
         deleted = false;
     }
 
+    public String getFullNames() {
+        return name + " " + lastName;
+    }
+
 }

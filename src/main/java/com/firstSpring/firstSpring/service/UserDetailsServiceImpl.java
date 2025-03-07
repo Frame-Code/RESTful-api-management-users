@@ -52,7 +52,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
 
         return new User(
-                userEntity.getEmail(),
+                userEntity.getFullNames(),
                 userEntity.getPassword(),
                 authorityList
         );

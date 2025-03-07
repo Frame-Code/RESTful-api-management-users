@@ -67,22 +67,26 @@ public class AuthService {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect Password");
             }
 
+            String email = userDTO.getEmail();
+            String userName = userDetails.getUsername();
+
+
             Authentication auth = new UsernamePasswordAuthenticationToken(
-                    userDetails.getUsername(),
+                    email,
                     userDetails.getPassword(),
                     userDetails.getAuthorities()
             );
 
-            Optional<String> jwtToken = jwtUtils.createToken(auth);
-            Optional<String> refreshToken = jwtUtils.createRefreshToken(auth);
+            Optional<String> jwtToken = jwtUtils.createToken(auth, userName);
+            Optional<String> refreshToken = jwtUtils.createRefreshToken(auth, userName);
             if (jwtToken.isEmpty() || refreshToken.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating the token");
             }
             revokeAllTokens(userMapper.toEntity(userDTO));
             saveUserToken(userRepository.findByEmail(userDTO.getEmail()).get(), jwtToken.get());
-            LOG.log(Level.INFO, "User: " + userDetails.getUsername() + " with the following authorities: " + userDetails.getAuthorities().toString() + " logged successfully");
+            LOG.log(Level.INFO, "User: " + userName + " with the following authorities: " + userDetails.getAuthorities().toString() + " logged successfully");
 
-            return ResponseEntity.ok(new TokenResponse(jwtToken.get(), refreshToken.get()));
+            return ResponseEntity.ok(new TokenResponse(jwtToken.get(), refreshToken.get(), userName));
         } catch (AuthenticationException e) {
             LOG.log(Level.SEVERE, e.getMessage(), "Invalid credentials");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
@@ -103,7 +107,6 @@ public class AuthService {
         List<String> roles = roleRepository.findAllActive().stream()
                 .map(role -> role.getRoleEnum().name())
                 .toList();
-
 
         List<String> userRoles = userRegister.getRolesRegister().getRoleListName().stream()
                 .filter(roles::contains)
@@ -131,14 +134,15 @@ public class AuthService {
                 .flatMap(role -> role.getPermissions().stream())
                 .forEach(permission -> authorityList.add(new SimpleGrantedAuthority(permission.getPermissionEnum().name())));
 
+        String userName = savedUser.getFullNames();
         Authentication authentication = new UsernamePasswordAuthenticationToken(
                 savedUser.getEmail(),
                 null,
                 authorityList
         );
 
-        Optional<String> jwtToken = jwtUtils.createToken(authentication);
-        Optional<String> refreshToken = jwtUtils.createRefreshToken(authentication);
+        Optional<String> jwtToken = jwtUtils.createToken(authentication, userName);
+        Optional<String> refreshToken = jwtUtils.createRefreshToken(authentication, userName);
 
         if (jwtToken.isEmpty() || refreshToken.isEmpty()) {
             LOG.log(Level.SEVERE, "Error creating the token");
@@ -146,7 +150,9 @@ public class AuthService {
         }
 
         saveUserToken(savedUser, jwtToken.get());
-        return ResponseEntity.ok().body(new TokenResponse(jwtToken.get(), refreshToken.get()));
+
+        LOG.log(Level.INFO, "User: " + userName + " with the following authorities: " + authentication.getAuthorities().toString() + " registered successfully");
+        return ResponseEntity.ok().body(new TokenResponse(jwtToken.get(), refreshToken.get(), userName));
     }
 
     public ResponseEntity<?> refreshToken(final String authHeader) {
@@ -185,9 +191,9 @@ public class AuthService {
                 null,
                 authoritiesCollect
         );
-
-        Optional<String> accessToken = jwtUtils.createToken(auth);
-        Optional<String> refreshTokenFinal = jwtUtils.createRefreshToken(auth);
+        String userName = user.get().getFullNames();
+        Optional<String> accessToken = jwtUtils.createToken(auth, userName);
+        Optional<String> refreshTokenFinal = jwtUtils.createRefreshToken(auth, userName);
 
         if(accessToken.isEmpty() || refreshTokenFinal.isEmpty()) {
             LOG.log(Level.SEVERE, "Error creating tokens");
@@ -196,7 +202,7 @@ public class AuthService {
 
         revokeAllTokens(user.get());
         saveUserToken(user.get(), accessToken.get());
-        return ResponseEntity.ok(new TokenResponse(accessToken.get(), refreshTokenFinal.get()));
+        return ResponseEntity.ok(new TokenResponse(accessToken.get(), refreshTokenFinal.get(), userName));
 
     }
 
@@ -244,13 +250,14 @@ public class AuthService {
                 authorityList
         );
 
-        Optional<String> jwtToken = jwtUtils.createToken(auth);
-        Optional<String> refreshToken = jwtUtils.createRefreshToken(auth);
+        String userName = user.getFullNames();
+        Optional<String> jwtToken = jwtUtils.createToken(auth, userName);
+        Optional<String> refreshToken = jwtUtils.createRefreshToken(auth, userName);
         if (jwtToken.isEmpty() || refreshToken.isEmpty()) {
             return null;
         }
 
-        return new TokenResponse(jwtToken.get(), refreshToken.get()); //Retorna una instancia de tipo TokenResponse que se termina volviendo al front como json
+        return new TokenResponse(jwtToken.get(), refreshToken.get(), userName); //Retorna una instancia de tipo TokenResponse que se termina volviendo al front como json
     }
 
     public Token createToken(UserEntity user, String jwtToken) {

@@ -69,7 +69,7 @@ public class SecurityConfig {
                     http.requestMatchers(HttpMethod.POST, "/auth/**").permitAll();
 
                     //configure private endpoints
-                    http.requestMatchers("/index.html", "/users.html").hasAnyRole(
+                    http.requestMatchers("/index.html").hasAnyRole(
                             RoleEnum.ADMIN.name(), RoleEnum.USER.name(), RoleEnum.INVITED.name(), RoleEnum.DEVELOPER.name());
                     http.requestMatchers(HttpMethod.GET, "/api/users" ).hasAnyRole(
                             RoleEnum.ADMIN.name(), RoleEnum.USER.name(), RoleEnum.DEVELOPER.name());

@@ -19,4 +19,7 @@ public class TokenResponse {
     
     @JsonProperty("refresh_token")
     private String refresh_token;
+
+    @JsonProperty("user_name")
+    private String user_name;
 }

@@ -25,16 +25,13 @@
 <body class="bg-gradient-primary">
     <script>
         //The following code was provided by chatgpt :)
-        function getCookie(name) {
-            const value = `; ${document.cookie}`;
-            const parts = value.split(`; ${name}=`);
-            if (parts.length === 2) return parts.pop().split(';').shift();
+        function existsCookie(nombre) {
+            // Usa `document.cookie` y el método `includes` para verificar si la cookie existe
+            return document.cookie.split('; ').some(cookie => cookie.startsWith(nombre + "="));
         }
 
-        const token = getCookie("access_token");
-
-        if (token) {
-            window.location.replace("/users.html");
+        if (existsCookie('access_token')) {
+            window.location.replace("/index.html");
         }
     </script>
     <div class="container">

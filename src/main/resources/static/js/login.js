@@ -28,5 +28,6 @@ async function login() {
 
     d.cookie = `access_token=${response.access_token}; Path=/; SameSite=Lax`;
     d.cookie = `refresh_token=${response.refresh_token}; Path=/; SameSite=Lax`;
-    window.location.replace("http://localhost:8080/users.html");
+    localStorage.setItem("user_name", response.user_name);
+    window.location.replace("http://localhost:8080/index.html");
 }
