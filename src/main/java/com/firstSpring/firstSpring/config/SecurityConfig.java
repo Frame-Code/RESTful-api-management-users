@@ -6,6 +6,7 @@ import com.firstSpring.firstSpring.model.RoleEnum;
 import com.firstSpring.firstSpring.service.UserDetailsServiceImpl;
 
 import com.firstSpring.firstSpring.utils.JwtUtils;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -62,17 +63,14 @@ public class SecurityConfig {
                             "/scss/**",
                             "/vendor/**",
                             "/WEB-INF/**",
-                            "/Init.html",
                             "/login.html",
                             "/register.html").permitAll();
                     http.requestMatchers(HttpMethod.GET, "/auth/**").permitAll();
                     http.requestMatchers(HttpMethod.POST, "/auth/**").permitAll();
 
                     //configure private endpoints
-                    http.requestMatchers("/index.html").hasAnyRole(
+                    http.requestMatchers("/index.html", "/users.html").hasAnyRole(
                             RoleEnum.ADMIN.name(), RoleEnum.USER.name(), RoleEnum.INVITED.name(), RoleEnum.DEVELOPER.name());
-                    http.requestMatchers("/users.html").hasAnyRole(
-                            RoleEnum.ADMIN.name(), RoleEnum.USER.name(), RoleEnum.DEVELOPER.name());
                     http.requestMatchers(HttpMethod.GET, "/api/users" ).hasAnyRole(
                             RoleEnum.ADMIN.name(), RoleEnum.USER.name(), RoleEnum.DEVELOPER.name());
                     http.requestMatchers(HttpMethod.GET, "/api/users/**").hasAnyRole(
@@ -83,9 +81,15 @@ public class SecurityConfig {
                     //configure any endpoints - NOT SPECIFIED
                     http.anyRequest().denyAll();
                 })
+                .exceptionHandling(exception -> {
+                    exception.authenticationEntryPoint((request, response, authException) -> {
+                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+                    });
+                })
                 .formLogin(form -> {
-                    form.loginPage("/Init.html");
+                    form.loginPage("/login.html");
                     form.loginProcessingUrl("auth/log-in").permitAll();
+                    form.disable();
                 })
                 .addFilterBefore(new JwtTokenValidator(jwtUtils), BasicAuthenticationFilter.class)
                 .build();

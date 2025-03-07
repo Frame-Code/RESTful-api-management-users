@@ -23,7 +23,10 @@ async function deleteUser(id) {
     });
     
     if(!response.ok) {
-        throw new Error(`Http error! status: ${response.status}`)
+        if(response.status == 401) {
+            alert("You can´t delete users");
+        }
+        throw new Error("Request error, status code: ", response.status);
     }
     
     await alert("User deleted");
@@ -31,14 +34,21 @@ async function deleteUser(id) {
 }
 
 async function loadUsers() {
-
     const response = await fetch('http://localhost:8080/api/users', {
         method: 'GET',
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
-        }
+        },
+        credential: 'include'
     });
+
+    if(!response.ok) {
+        if(response.status == 401) {
+            alert("Your are not allowed to view the users list");
+        }
+        throw new Error("Request error, status code: ", response.status);
+    }
 
     const users = await response.json();
 
