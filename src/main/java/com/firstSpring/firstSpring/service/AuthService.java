@@ -95,8 +95,13 @@ public class AuthService {
 
     public ResponseEntity<?> register(@NotNull UserRegister userRegister) {
         if (userRepository.findByEmail(userRegister.getEmail()).isPresent()) {
-            LOG.log(Level.SEVERE, "The user with the email " + userRegister.getEmail() + "already exists");
+            LOG.log(Level.SEVERE, "The user with the email " + userRegister.getEmail() + " already exists");
             return ResponseEntity.status(HttpStatus.CONFLICT).body("The user with the email " + userRegister.getEmail() + "already exists");
+        }
+
+        if (userRepository.findByNumberPhone(userRegister.getPhone()).isPresent()) {
+            LOG.log(Level.SEVERE, "The user with the phone " + userRegister.getPhone() + " already exists");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("The user with the phone " + userRegister.getPhone() + "already exists");
         }
 
         if (userRegister.getRolesRegister().getRoleListName().isEmpty()) {
