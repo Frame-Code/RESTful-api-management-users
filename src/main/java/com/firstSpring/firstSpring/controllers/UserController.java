@@ -10,12 +10,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  *
@@ -38,17 +33,25 @@ public class UserController {
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<?> findUserByID(@PathVariable Long id) {
+    public ResponseEntity<?> findUserByID(@PathVariable final Long id) {
         Optional<UserResponse> responseOpt = userService.findById(id);
         if(responseOpt.isEmpty()) {
             return new ResponseEntity<>(Optional.empty(), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(responseOpt, HttpStatus.OK);
     }
+
+    @GetMapping(value = "/search")
+    public ResponseEntity<?> findUserByNameOrEmail(@RequestParam final String value) {
+        return (userService.findByNameOrEmail(value.trim().toLowerCase()).isEmpty())?
+                ResponseEntity.status(HttpStatus.NO_CONTENT).body("Not users found") :
+                ResponseEntity.ok(userService.findByNameOrEmail(value).toString());
+
+    }
     
     
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable Long id) {
+    public void deleteUser(@PathVariable final Long id) {
         userService.softDeleteById(id);
     }
 }

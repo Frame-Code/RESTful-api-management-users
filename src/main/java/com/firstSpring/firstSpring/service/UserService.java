@@ -1,6 +1,8 @@
 package com.firstSpring.firstSpring.service;
 
 import com.firstSpring.firstSpring.dto.UserResponse;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,12 +34,18 @@ public class UserService {
     }
 
     public Optional<UserResponse> findById(Long id) {
-        Optional<UserEntity> userOpt = userRepository.findByIdActive(id);
+        return userRepository.findByIdActive(id).map(userMapper::toUserResponse);
+    }
 
-        if(userOpt.isPresent()) {
-            return Optional.of(userMapper.toUserResponse(userOpt.get()));
-        }
-        return Optional.empty();
+    public List<UserResponse> findByNameOrEmail(String value) {
+        return userRepository.findByNameOrEmail(
+                value.transform( string -> "%" + string + "%"))
+                .stream()
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(userMapper::toUserResponse)
+                .toList();
+
     }
 
     public void softDeleteById(Long id) {
