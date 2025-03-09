@@ -57,8 +57,9 @@ async function loadUsers() {
 
     const users = await response.json();
 
-    let usersTable = d.querySelector('#usersTable tbody');
-    if(usersTable.textContent.trim() === "") {
+    if(users.length != 0) {
+        let usersTable = d.querySelector('#usersTable tbody');
+        usersTable.textContent = "";
         for (const user of users) {
             usersTable.innerHTML += `
             <tr>
