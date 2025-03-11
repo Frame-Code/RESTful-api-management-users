@@ -43,10 +43,10 @@ public class UserController {
 
     @GetMapping(value = "/search")
     public ResponseEntity<?> findUserByNameOrEmail(@RequestParam final String value) {
-        return (userService.findByNameOrEmail(value.trim().toLowerCase()).isEmpty())?
-                ResponseEntity.status(HttpStatus.NO_CONTENT).body("Not users found") :
-                ResponseEntity.ok(userService.findByNameOrEmail(value).toString());
-
+        List<UserResponse> userList = userService.findByNameOrEmail(value.trim().toLowerCase());
+        return (!userList.isEmpty())?
+                ResponseEntity.ok(userList) :
+                ResponseEntity.status(HttpStatus.NO_CONTENT).body("Not users found");
     }
     
     

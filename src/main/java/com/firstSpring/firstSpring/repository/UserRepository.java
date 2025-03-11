@@ -28,7 +28,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     @Query("SELECT u FROM UserEntity u WHERE u.phone = :phone AND u.deleted = false")
     Optional<UserEntity> findByNumberPhone(@Param("phone") String phone);
 
-    @Query("SELECT u FROM UserEntity u WHere LOWER(u.name) LIKE :value OR LOWER(u.lastName) LIKE :value OR LOWER(u.email) = :value AND u.deleted = false")
+    @Query("SELECT u FROM UserEntity u WHere LOWER(u.name) LIKE :value OR LOWER(u.lastName) LIKE :value OR LOWER(u.email) LIKE :value AND u.deleted = false")
     List<Optional<UserEntity>> findByNameOrEmail(@Param("value") String value);
     
     @Modifying
