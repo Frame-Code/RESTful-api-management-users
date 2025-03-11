@@ -2,19 +2,15 @@ package com.firstSpring.firstSpring.service;
 
 import com.firstSpring.firstSpring.dto.UserResponse;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.firstSpring.firstSpring.model.UserEntity;
 import com.firstSpring.firstSpring.repository.UserRepository;
 import com.firstSpring.firstSpring.service.mappers.UserMapper;
 
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
@@ -22,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    private static final Logger LOG = Logger.getLogger(UserService.class.getName());
     @Autowired
     private UserRepository userRepository;
 

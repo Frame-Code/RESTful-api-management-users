@@ -28,6 +28,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 
+import java.util.Arrays;
+
 /**
  * @author Artist-Code
  */
@@ -64,14 +66,16 @@ public class SecurityConfig {
                             "/vendor/**",
                             "/WEB-INF/**",
                             "/login.html",
-                            "/register.html").permitAll();
+                            "/register.html",
+                            "/").permitAll();
                     http.requestMatchers(HttpMethod.GET, "/auth/**").permitAll();
                     http.requestMatchers(HttpMethod.POST, "/auth/**").permitAll();
 
-                    //configure private endpoints
+                    //configure private endpoints and resources
                     http.requestMatchers("/index.html").hasAnyRole(
                             RoleEnum.ADMIN.name(), RoleEnum.USER.name(), RoleEnum.INVITED.name(), RoleEnum.DEVELOPER.name());
-                    http.requestMatchers(HttpMethod.GET, "/api/users" ).hasAnyRole(
+
+                    http.requestMatchers(HttpMethod.GET, "/api/users", "/api/users/search/**").hasAnyRole(
                             RoleEnum.ADMIN.name(), RoleEnum.USER.name(), RoleEnum.DEVELOPER.name());
                     http.requestMatchers(HttpMethod.GET, "/api/users/**").hasAnyRole(
                             RoleEnum.ADMIN.name(), RoleEnum.DEVELOPER.name());
@@ -83,13 +87,21 @@ public class SecurityConfig {
                 })
                 .exceptionHandling(exception -> {
                     exception.authenticationEntryPoint((request, response, authException) -> {
+                        if(Arrays.stream(request.getCookies()).noneMatch(cookie -> cookie.getName().equals("access_token"))) {
+                            response.sendRedirect("/login.html");
+                            return;
+                        }
+
+                        if(request.getRequestURI().equals("/") || request.getRequestURI().isBlank()) {
+                            response.sendRedirect("/index.html");
+                        }
+
                         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
                     });
                 })
                 .formLogin(form -> {
                     form.loginPage("/login.html");
                     form.loginProcessingUrl("auth/log-in").permitAll();
-                    form.disable();
                 })
                 .addFilterBefore(new JwtTokenValidator(jwtUtils), BasicAuthenticationFilter.class)
                 .build();

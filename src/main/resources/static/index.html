@@ -34,6 +34,17 @@
   </head>
 
   <body id="page-top">
+    <script>
+      //The following code was provided by chatgpt :)
+      function existsCookie(nombre) {
+          // Usa `document.cookie` y el método `includes` para verificar si la cookie existe
+          return document.cookie.split('; ').some(cookie => cookie.startsWith(nombre + "="));
+      }
+
+      if (!existsCookie('access_token')) {
+          window.location.replace("/login.html");
+      }
+    </script>
     <!-- Page Wrapper -->
     <div id="wrapper">
       <!-- Sidebar -->
@@ -97,6 +108,7 @@
             >
               <div class="input-group">
                 <input
+                  id="inpSearch"
                   type="text"
                   class="form-control bg-light border-0 small"
                   placeholder="Search user by name or email"
@@ -285,7 +297,7 @@
             >
               Cancel
             </button>
-            <a class="btn btn-primary" href="login.html" onclick="logout()">Logout</a>
+            <a class="btn btn-primary" href="login.html" id="btnLogout">Logout</a>
           </div>
         </div>
       </div>

@@ -3,7 +3,7 @@ const d = document;
 d.querySelector("#btnRegister").addEventListener("click", checkPassword);
 
 function checkPassword() {
-    if (!d.querySelector("#inputPassword").value.trim() === d.querySelector("#repeatPassword").value.trim()) {
+    if (d.querySelector("#inputPassword").value.trim() !== d.querySelector("#repeatPassword").value.trim()) {
         alert("Fields password are incorrect");
         return;
     }
