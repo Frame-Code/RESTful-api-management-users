@@ -25,7 +25,6 @@
 
     <!-- Custom styles for this template -->
     <link href="css/sb-admin-2.min.css" rel="stylesheet" />
-    <link href="css/modal.css" rel="stylesheet" />
 
     <!-- Custom styles for this page -->
     <link
@@ -316,7 +315,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabe">Edit user selected</h5>
+                    <h5 class="modal-title" id="exampleModalLabe"><strong>Edit user selected</strong></h5>
                     <button
                             class="close"
                             type="button"
@@ -327,7 +326,45 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    Select "Logout" below if you are ready to end your current session.
+                  <form class="user">
+                    <div class="form-group row">
+                      <div class="col-sm-6 mb-3 mb-sm-0">
+                        <label for="inpFirstName">Names: </label>
+                        <input type="text" class="form-control form-control-user" id="inpFirstName"
+                               placeholder="First Name">
+                      </div>
+                      <div class="col-sm-6">
+                        <label for="impLastName">Last names: </label>
+                        <input type="text" class="form-control form-control-user" id="impLastName"
+                               placeholder="Last Name">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="impEmail">Email: </label>
+                      <input type="email" class="form-control form-control-user" id="impEmail"
+                             placeholder="Email Address" disabled>
+                    </div>
+                    <div class="form-group">
+                      <label for="impPhone">Phone: </label>
+                      <input type="text" class="form-control form-control-user" id="impPhone"
+                             placeholder="number phone">
+                    </div>
+                    <hr>
+                      <a class="btn btn-primary" href="#" id="btnResetPassword">Reset password!</a>
+                      <br>
+                      <p>Password has not been reset!</p>
+                    <hr>
+                    <div class="form-group"> <strong>Select roles:</strong>
+                      <br><br>
+                      <div style="display: flex;">
+                        <label for="impAdmin">Admin: </label><input type="checkbox" class="form-control form-control-user" id="impAdmin">
+                        <label for="impDeveloper">Developer: </label><input type="checkbox" class="form-control form-control-user" id="impDeveloper">
+                        <label for="impUser">User: </label><input type="checkbox" class="form-control form-control-user" id="impUser">
+                        <label for="impInvited">Invited: </label><input type="checkbox" class="form-control form-control-user" id="impInvited">
+                      </div>
+                    </div>
+                    <hr>
+                  </form>
                 </div>
                 <div class="modal-footer">
                     <button
