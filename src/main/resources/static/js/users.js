@@ -4,6 +4,7 @@ $(document).ready(function () {
     init();
     searchUsers();
     $('#usersTable').DataTable();
+    $("#editUserModal").modal("hide");
 });
 
 function init() {
@@ -12,6 +13,7 @@ function init() {
     d.querySelector("#btnSearchUsers").addEventListener("click", searchUser);
     d.querySelector("#btnLogout").addEventListener("click", logout);
 }
+
 
 function logout() {
     document.cookie = "access_token=; Path=/; Max-Age=0";
@@ -70,6 +72,10 @@ async function searchUsers() {
     loadUsers(await response.json());
 }
 
+async function editUser(id) {
+    d.querySelector("#editUserModal").style.display = 'flex';
+}
+
 async function deleteUser(id) {
     if(!confirm('Do yo want to delete the user selected?')) {
         return;
@@ -108,6 +114,9 @@ function loadUsers(usersJson) {
               <td>
                 <a href="#" onclick="deleteUser(${user.id})" class="btn btn-danger btn-circle btn-sm">
                     <i class="fas fa-trash"></i>
+                </a>
+                <a href="#editUserModal" class="btn btn-info btn-circle btn-sm" data-toggle="modal" data-target="#editUserModal">
+                    <i class="fa-solid fa-user-pen"></i>
                 </a>
               </td>
             </tr>
