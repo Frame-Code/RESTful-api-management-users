@@ -100,6 +100,53 @@ async function deleteUser(id) {
     await d.location.reload();
 }
 
+async function getInfoUser(id) {
+    const request = await fetch(`http://localhost:8080/api/users/${id}`, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-type': 'application/json'
+        }
+    });
+
+    if(!request.ok) {
+        alert("Error loading data of the user");
+        console.log("Http error");
+    }
+
+    const response = await request.json();
+
+    d.querySelector("#inpFirstName").value = response.name;
+    d.querySelector("#impLastName").value = response.lastName;
+    d.querySelector("#impEmail").value = response.email;
+    d.querySelector("#impPhone").value = response.phone;
+
+    d.querySelector("#impUser").checked = false;
+    d.querySelector("#impAdmin").checked = false;
+    d.querySelector("#impDeveloper").checked = false;
+    d.querySelector("#impInvited").checked = false;
+
+    for(const role of response.roles) {
+        if(role == "ADMIN") {
+            d.querySelector("#impAdmin").checked = true;
+        }
+
+        if(role == "DEVELOPER") {
+           d.querySelector("#impDeveloper").checked = true;
+        }
+
+        if(role == "USER") {
+           d.querySelector("#impUser").checked = true;
+        }
+
+        if(role == "INVITED") {
+           d.querySelector("#impInvited").checked = true;
+        }
+    }
+
+
+}
+
 function loadUsers(usersJson) {
     if(usersJson.length != 0) {
         let usersTable = d.querySelector('#usersTable tbody');
@@ -115,7 +162,7 @@ function loadUsers(usersJson) {
                 <a href="#" onclick="deleteUser(${user.id})" class="btn btn-danger btn-circle btn-sm">
                     <i class="fas fa-trash"></i>
                 </a>
-                <a href="#editUserModal" class="btn btn-info btn-circle btn-sm" data-toggle="modal" data-target="#editUserModal">
+                <a href="#editUserModal" onclick="getInfoUser(${user.id})" class="btn btn-info btn-circle btn-sm" data-toggle="modal" data-target="#editUserModal">
                     <i class="fa-solid fa-user-pen"></i>
                 </a>
               </td>

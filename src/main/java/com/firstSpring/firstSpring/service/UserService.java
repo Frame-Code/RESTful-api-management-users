@@ -1,9 +1,11 @@
 package com.firstSpring.firstSpring.service;
 
+import com.firstSpring.firstSpring.dto.GetInfoUser;
 import com.firstSpring.firstSpring.dto.UserResponse;
 
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,7 @@ import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -30,13 +33,13 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<UserResponse> findById(Long id) {
-        return userRepository.findByIdActive(id).map(userMapper::toUserResponse);
+    public Optional<GetInfoUser> findById(Long id) {
+        return userRepository.findById(id)
+                .map(userMapper::toGetInfoUser);
     }
 
     public List<UserResponse> findByNameOrEmail(String value) {
-        return userRepository.findByNameOrEmail(
-                value.transform( string -> "%" + string + "%"))
+        return userRepository.findByNameOrEmail(value.transform( string -> "%" + string + "%"))
                 .stream()
                 .filter(Optional::isPresent)
                 .map(Optional::get)

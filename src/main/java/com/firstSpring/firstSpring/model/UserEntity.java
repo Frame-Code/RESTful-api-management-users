@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -87,6 +88,16 @@ public class UserEntity implements Serializable{
 
     public String getFullNames() {
         return name + " " + lastName;
+    }
+
+    public Set<String> getRolesString() {
+        if(roles == null || roles.isEmpty()) {
+            return null;
+        }
+
+        return roles.stream()
+                .map(role -> role.getRoleEnum().name())
+                .collect(Collectors.toSet());
     }
 
 }

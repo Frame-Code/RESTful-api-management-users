@@ -5,7 +5,6 @@ import com.firstSpring.firstSpring.dto.UserResponse;
 import com.firstSpring.firstSpring.service.UserService;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -34,11 +33,11 @@ public class UserController {
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<?> findUserByID(@PathVariable final Long id) {
-        Optional<UserResponse> responseOpt = userService.findById(id);
-        if(responseOpt.isEmpty()) {
-            return new ResponseEntity<>(Optional.empty(), HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(responseOpt, HttpStatus.OK);
+        var responseOpt = userService.findById(id);
+
+        return responseOpt.isEmpty()?
+                ResponseEntity.status(HttpStatus.NO_CONTENT).body("Error getting user info") :
+                ResponseEntity.ok(responseOpt.get());
     }
 
     @GetMapping(value = "/search")

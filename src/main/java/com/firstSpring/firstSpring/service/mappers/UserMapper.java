@@ -1,14 +1,16 @@
 package com.firstSpring.firstSpring.service.mappers;
 
-import com.firstSpring.firstSpring.dto.UserDTO;
-import com.firstSpring.firstSpring.dto.UserLogin;
-import com.firstSpring.firstSpring.dto.UserRegister;
-import com.firstSpring.firstSpring.dto.UserResponse;
+import com.firstSpring.firstSpring.dto.*;
+import com.firstSpring.firstSpring.model.Role;
 import com.firstSpring.firstSpring.model.UserEntity;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -27,6 +29,9 @@ public interface UserMapper {
     UserLogin toUserLogin(UserEntity user);
 
     UserResponse toUserResponse(UserEntity user);
+
+    @Mapping(target = "roles", source = "roles", qualifiedByName = "mapRolesString")
+    GetInfoUser toGetInfoUser(UserEntity user);
 
     @InheritInverseConfiguration(name = "toUserRegister")
     @Mapping(target = "id", ignore = true)
@@ -60,4 +65,10 @@ public interface UserMapper {
     @Mapping(target = "tokens", ignore = true)
     UserEntity toEntity(UserResponse userResponse);
 
+    @Named("mapRolesString")
+    default Set<String> mapRolesString(Set<Role> roles) {
+        return roles.stream()
+                .map(role -> role.getRoleEnum().name())
+                .collect(Collectors.toSet());
+    }
 }
