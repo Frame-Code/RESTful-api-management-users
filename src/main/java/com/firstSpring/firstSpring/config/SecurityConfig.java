@@ -42,7 +42,6 @@ public class SecurityConfig {
     @Autowired
     private JwtUtils jwtUtils;
 
-
     //HttpSecurity object go to around of all filters from SecurityFilerChain
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -77,7 +76,9 @@ public class SecurityConfig {
 
                     http.requestMatchers(HttpMethod.GET, "/api/users", "/api/users/search/**").hasAnyRole(
                             RoleEnum.ADMIN.name(), RoleEnum.USER.name(), RoleEnum.DEVELOPER.name());
-                    http.requestMatchers(HttpMethod.GET, "/api/users/**").hasAnyRole(
+                    http.requestMatchers(HttpMethod.GET, "/api/users/**", "api/users/reset/{id}").hasAnyRole(
+                            RoleEnum.ADMIN.name(), RoleEnum.DEVELOPER.name());
+                    http.requestMatchers(HttpMethod.POST, "api/users/reset/**").hasAnyRole(
                             RoleEnum.ADMIN.name(), RoleEnum.DEVELOPER.name());
                     http.requestMatchers(HttpMethod.DELETE, "/api/users/**").hasAuthority(
                             PermissionsEnum.DELETE.name());
@@ -87,7 +88,7 @@ public class SecurityConfig {
                 })
                 .exceptionHandling(exception -> {
                     exception.authenticationEntryPoint((request, response, authException) -> {
-                        if(Arrays.stream(request.getCookies()).noneMatch(cookie -> cookie.getName().equals("access_token"))) {
+                        if(request.getCookies() == null || Arrays.stream(request.getCookies()).noneMatch(cookie -> cookie.getName().equals("access_token"))) {
                             response.sendRedirect("/login.html");
                             return;
                         }

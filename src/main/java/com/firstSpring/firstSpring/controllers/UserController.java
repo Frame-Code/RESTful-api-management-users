@@ -40,6 +40,14 @@ public class UserController {
                 ResponseEntity.ok(responseOpt.get());
     }
 
+    @PostMapping(value = "/reset/{id}")
+    public ResponseEntity<?> resetPassword(@PathVariable final Long id) {
+        var responseOpt = userService.resetPassword(id);
+        return responseOpt.isEmpty()?
+                ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found") :
+                ResponseEntity.ok(responseOpt.get());
+    }
+
     @GetMapping(value = "/search")
     public ResponseEntity<?> findUserByNameOrEmail(@RequestParam final String value) {
         List<UserResponse> userList = userService.findByNameOrEmail(value.trim().toLowerCase());

@@ -12,6 +12,7 @@ function init() {
 
     d.querySelector("#btnSearchUsers").addEventListener("click", searchUser);
     d.querySelector("#btnLogout").addEventListener("click", logout);
+    d.querySelector("#btnResetPassword").addEventListener("click", resetPassword);
 }
 
 
@@ -100,6 +101,24 @@ async function deleteUser(id) {
     await d.location.reload();
 }
 
+async function resetPassword() {
+    const id = d.querySelector("#idUserSelected").innerHTML;
+    const request = await fetch(`http://localhost:8080/api/users/reset/${id}`, {
+        method: 'POST',
+        headers: {
+            'Content-type': 'application/json'
+        }
+    });
+
+    if(!request.ok) {
+        alert("Error to reset the password");
+        throw new Error("Http error", request.status);
+    }
+
+    alert("Password has been reset")
+    d.querySelector("#msgResetPassword").innerHTML = `Password has been reset, new password: <strong>${await request.text()}</strong>`
+}
+
 async function getInfoUser(id) {
     const request = await fetch(`http://localhost:8080/api/users/${id}`, {
         method: 'GET',
@@ -110,11 +129,19 @@ async function getInfoUser(id) {
     });
 
     if(!request.ok) {
+        if(request.status == 401) {
+            alert("You don´t have permissions to edit users")
+            $("#editUserModal").modal("hide");
+            return;
+        }
+
         alert("Error loading data of the user");
-        console.log("Http error");
+        console.log("Http error, status ", request.status);
     }
 
     const response = await request.json();
+
+    d.querySelector("#idUserSelected").innerHTML = response.id;
 
     d.querySelector("#inpFirstName").value = response.name;
     d.querySelector("#impLastName").value = response.lastName;
@@ -143,8 +170,6 @@ async function getInfoUser(id) {
            d.querySelector("#impInvited").checked = true;
         }
     }
-
-
 }
 
 function loadUsers(usersJson) {
