@@ -13,6 +13,7 @@ function init() {
     d.querySelector("#btnSearchUsers").addEventListener("click", searchUser);
     d.querySelector("#btnLogout").addEventListener("click", logout);
     d.querySelector("#btnResetPassword").addEventListener("click", resetPassword);
+    d.querySelector("#btnSaveChanges").addEventListener("click", editUser);
 }
 
 
@@ -24,6 +25,30 @@ function logout() {
 function unexpectedError(response_status) {
     alert("Unexpected error!");
     throw new Error(`Http error: ${response_status}`);
+}
+
+function getRoles() {
+    let rolesString = [];
+    let i = 0;
+
+    if(document.querySelector("#impAdmin").checked) {
+        rolesString[i] = 'ADMIN';
+        i++;
+    }
+    if(document.querySelector("#impDeveloper").checked) {
+        rolesString[i] = 'DEVELOPER';
+        i++;
+    }
+    if(document.querySelector("#impUser").checked) {
+        rolesString[i] = 'USER';
+        i++;
+    }
+    if(document.querySelector("#impInvited").checked) {
+        rolesString[i] = 'INVITED';
+        i++;
+    }
+
+    return rolesString;
 }
 
 async function searchUser() {
@@ -169,7 +194,31 @@ async function getInfoUser(id) {
 }
 
 async function editUser() {
+    const userJson = {
+        id: d.querySelector("#idUserSelected").innerHTML.trim(),
+        name: d.querySelector("#inpFirstName").value.trim(),
+        lastName: d.querySelector("#impLastName").value.trim(),
+        email: d.querySelector("#impEmail").value.trim(),
+        phone: d.querySelector("#impPhone").value.trim(),
+        roles: getRoles()
+    };
 
+    const request = await fetch("http://localhost:8080/api/users/edit", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(userJson)
+    });
+
+    if(!request.ok) {
+        alert("Error to save the changes");
+        throw new Error("http error, status", request.status);
+    }
+
+    alert("Changes saved correctly");
+    $("#editUserModal").modal("hide");
+    location.reload();
 }
 
 function loadUsers(usersJson) {
