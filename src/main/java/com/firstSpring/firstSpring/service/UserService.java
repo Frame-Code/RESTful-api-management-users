@@ -1,11 +1,14 @@
 package com.firstSpring.firstSpring.service;
 
-import com.firstSpring.firstSpring.dto.GetInfoUser;
+import com.firstSpring.firstSpring.dto.EditUser;
 import com.firstSpring.firstSpring.dto.UserResponse;
 
+import java.util.HashSet;
 import java.util.List;
 
+import com.firstSpring.firstSpring.repository.RoleRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -33,6 +36,9 @@ public class UserService {
     private UserRepository userRepository;
 
     @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     private final UserMapper userMapper;
@@ -45,22 +51,21 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<GetInfoUser> findById(final Long id) {
+    public Optional<EditUser> findById(final Long id) {
         return userRepository.findByIdActive(id)
-                .map(userMapper::toGetInfoUser);
+                .map(userMapper::toEditUser);
     }
 
     public Optional<?> resetPassword(final Long id) {
-        var responseOpt = userRepository.findByIdActive(id);
-
-        if (responseOpt.isEmpty()) {
-            return Optional.empty();
-        }
-
-        responseOpt.get().setPassword(passwordEncoder.encode(UserService.defaultPassword));
-        userRepository.save(responseOpt.get());
-        LOG.log(Level.INFO, "Password of the user with the following email: " + responseOpt.get().getEmail() + " has been reset correctly");
-        return Optional.of(defaultPassword);
+        return userRepository.findByIdActive(id)
+                .map(user -> {
+                    user.setPassword(passwordEncoder.encode(UserService.defaultPassword));
+                    return userRepository.save(user);
+                })
+                .map(user -> {
+                    LOG.log(Level.INFO, "Password of the user with the following email: " + user.getEmail() + " has been reset correctly");
+                    return Optional.of(UserService.defaultPassword);
+                });
     }
 
     public List<UserResponse> findByNameOrEmail(final String value) {
@@ -71,6 +76,18 @@ public class UserService {
                 .map(userMapper::toUserResponse)
                 .toList();
 
+    }
+
+    public Optional<EditUser> editUser(@NotNull final EditUser editUser) {
+        return userRepository.findByIdActive(editUser.getId())
+                .map(user -> {
+                    user.setRoles(new HashSet<>(roleRepository.findByNames(editUser.getRoles().stream().toList())));
+                    user.setName(editUser.getName());
+                    user.setLastName(editUser.getLastName());
+                    user.setPhone(editUser.getPhone());
+                    return userRepository.save(user);
+                })
+                .map(userMapper::toEditUser);
     }
 
     public void softDeleteById(Long id) {

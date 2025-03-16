@@ -78,7 +78,7 @@ public class SecurityConfig {
                             RoleEnum.ADMIN.name(), RoleEnum.USER.name(), RoleEnum.DEVELOPER.name());
                     http.requestMatchers(HttpMethod.GET, "/api/users/**", "api/users/reset/{id}").hasAnyRole(
                             RoleEnum.ADMIN.name(), RoleEnum.DEVELOPER.name());
-                    http.requestMatchers(HttpMethod.POST, "api/users/reset/**").hasAnyRole(
+                    http.requestMatchers(HttpMethod.POST, "/api/users/reset/**", "/api/users/edit").hasAnyRole(
                             RoleEnum.ADMIN.name(), RoleEnum.DEVELOPER.name());
                     http.requestMatchers(HttpMethod.DELETE, "/api/users/**").hasAuthority(
                             PermissionsEnum.DELETE.name());

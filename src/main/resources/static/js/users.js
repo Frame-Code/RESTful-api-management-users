@@ -73,10 +73,6 @@ async function searchUsers() {
     loadUsers(await response.json());
 }
 
-async function editUser(id) {
-    d.querySelector("#editUserModal").style.display = 'flex';
-}
-
 async function deleteUser(id) {
     if(!confirm('Do yo want to delete the user selected?')) {
         return;
@@ -170,6 +166,10 @@ async function getInfoUser(id) {
            d.querySelector("#impInvited").checked = true;
         }
     }
+}
+
+async function editUser() {
+
 }
 
 function loadUsers(usersJson) {

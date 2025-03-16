@@ -1,5 +1,6 @@
 package com.firstSpring.firstSpring.controllers;
 
+import com.firstSpring.firstSpring.dto.EditUser;
 import com.firstSpring.firstSpring.dto.UserResponse;
 
 import com.firstSpring.firstSpring.service.UserService;
@@ -38,6 +39,21 @@ public class UserController {
         return responseOpt.isEmpty()?
                 ResponseEntity.status(HttpStatus.NO_CONTENT).body("Error getting user info") :
                 ResponseEntity.ok(responseOpt.get());
+    }
+
+    @PostMapping(value = "/edit")
+    public ResponseEntity<?> editUser(@RequestBody final EditUser editUser) {
+        if(editUser.getId() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Id parameter not recognize");
+        }
+
+        if(editUser.getRoles() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Roles parameter no recognize");
+        }
+
+        return userService.editUser(editUser).isEmpty()?
+                ResponseEntity.status(HttpStatus.NO_CONTENT).body("User not saved") :
+                ResponseEntity.status(HttpStatus.OK).body("User edited correctly");
     }
 
     @PostMapping(value = "/reset/{id}")

@@ -11,7 +11,7 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetInfoUser {
+public class EditUser {
     private Long id;
     private String name;
     private String lastName;
