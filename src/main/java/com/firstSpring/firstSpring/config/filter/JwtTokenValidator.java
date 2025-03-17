@@ -21,6 +21,15 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+/**
+ * This is the filter to verify if the request have the respective jwt tokens.
+ * Is necessary to the tokens are saved in the browser's cookies, because this filter only search
+ * the token on the cookies, NOT in the headers of the request.
+ * If the tokens are not present just the request go the following filter
+ * If the tokens are present, the user (getting the user around the jwt token) is saved in the spring security context
+ *
+ * @author Daniel Mora Cantillo
+ * */
 
 @RequiredArgsConstructor
 public class JwtTokenValidator extends OncePerRequestFilter {
@@ -51,7 +60,7 @@ public class JwtTokenValidator extends OncePerRequestFilter {
             return;
         }
 
-        LOG.log(Level.INFO, "Token identified ");
+        LOG.log(Level.INFO, "Token identified");
         try {
             DecodedJWT decodedJWT = jwtUtils.validateToken(jwtToken);
             LOG.log(Level.INFO, "Token valid");

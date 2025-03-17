@@ -8,8 +8,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
+ *  Configuration class to define a Bean of the mapper (to convert entities to dto's and the other way)
  *
- * @author Artist-Code
+ * @author Daniel Mora Cantillo
  */
 @Configuration
 @RequiredArgsConstructor

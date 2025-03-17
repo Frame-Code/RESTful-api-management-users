@@ -11,8 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
+ *  Controller with the endpoints necessaries to have a great login, register, and refresh tokens
  *
- * @author Artist-Code
+ * @author Daniel Mora Cantillo
  */
 @RestController
 @RequestMapping(value = "/auth")

@@ -31,7 +31,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import java.util.Arrays;
 
 /**
- * @author Artist-Code
+ * Security config class to define the security settings necessary in this app
+ *
+ * @author Daniel Mora Cantillo
  */
 @Configuration
 @EnableWebSecurity
@@ -42,14 +44,20 @@ public class SecurityConfig {
     @Autowired
     private JwtUtils jwtUtils;
 
-    //HttpSecurity object go to around of all filters from SecurityFilerChain
+    //HttpSecurity object go to around of all filters from SecurityFilterChain
+    /**
+     * This method define to disable of the csrf because this is a apiRest, cors as default,  maintains a session as 'STATELESS' because the session is manage by the tokens
+     * also define the resources and endpoints with permissions necessaries, define how to do when occur an exception redirecting if is necessary,
+     * define the resource with the login form and last add before of all this, the filter 'JwtTokenValidator' to first verify the token
+     * @param httpSecurity the object that runs each filter
+     * @return the interface SecurityFilterChain with all my settings
+     * */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 //Filters
                 //Recommended in MVC but not in Rest, because in mvn we're working with forms but in rest we works using JSON
                 .csrf(csrf -> csrf.disable())
-                //.httpBasic(Customizer.withDefaults())
                 .cors(Customizer.withDefaults())
                 //The session is managed by the tokens but not the object session on the side of the client (the object session is very wight)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -76,7 +84,7 @@ public class SecurityConfig {
 
                     http.requestMatchers(HttpMethod.GET, "/api/users", "/api/users/search/**").hasAnyRole(
                             RoleEnum.ADMIN.name(), RoleEnum.USER.name(), RoleEnum.DEVELOPER.name());
-                    http.requestMatchers(HttpMethod.GET, "/api/users/**", "api/users/reset/{id}").hasAnyRole(
+                    http.requestMatchers(HttpMethod.GET, "/api/users/**", "/api/users/reset/{id}").hasAnyRole(
                             RoleEnum.ADMIN.name(), RoleEnum.DEVELOPER.name());
                     http.requestMatchers(HttpMethod.POST, "/api/users/reset/**", "/api/users/edit").hasAnyRole(
                             RoleEnum.ADMIN.name(), RoleEnum.DEVELOPER.name());
@@ -108,11 +116,18 @@ public class SecurityConfig {
                 .build();
     }
 
+    /**
+     * This method just return an AuthenticationManager to authenticate the user
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
+    /**
+     * This method get an Object UserDetailsServiceImpl to define the passwordEncoder and the UserDetailsService to return that as
+     * object AuthenticationProvider
+     * */
     @Bean
     public AuthenticationProvider authenticationProvider(UserDetailsServiceImpl userDetailsServiceImpl) {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
@@ -121,6 +136,9 @@ public class SecurityConfig {
         return provider;
     }
 
+    /**
+     * This method just return an object BCrypt to encode the passwords
+     * */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

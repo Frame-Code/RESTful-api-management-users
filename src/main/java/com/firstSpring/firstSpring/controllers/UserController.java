@@ -13,8 +13,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
- *
- * @author Artist-Code
+ *  Controller to define the different endpoints to manage the 'user':
+ *  we have:
+ *  Endpoint 'GET /api/users' to return a json with all users from the database
+ *  Endpoint 'GET /api/users/{id}' to return a json with the user searching from that 'id'
+ *  Endpoint 'POST /api/users/edit' to update the user from the body of the request
+ *  Endpoint 'POST /api/users/reset/{id}' to reset the password of the user
+ *  Endpoint 'GET /api/users/search' to search users using name or email (the value to be searched must be in the URI parameters )
+ *  Endpoint 'DELETE /api/users/{id}' to 'delete' the user from the database (really is a soft delete. changing the attribute deleted on the respective table)
+ * @author Daniel Mora Cantillo
  */
 @RestController
 @RequestMapping(value = "/api/users")
