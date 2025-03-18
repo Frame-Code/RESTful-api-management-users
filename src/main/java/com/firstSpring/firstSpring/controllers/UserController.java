@@ -31,12 +31,11 @@ public class UserController {
     private UserService userService;
 
     @GetMapping
-    public ResponseEntity<List<UserResponse>> findAll() {
+    public ResponseEntity<?> findAll() {
         List<UserResponse> users = userService.findAll();
-        if(users.isEmpty()) { 
-            return new ResponseEntity<>(users, HttpStatus.NO_CONTENT);
-        }
-        return new ResponseEntity<>(users, HttpStatus.OK);
+        return users.isEmpty()?
+                ResponseEntity.status(HttpStatus.NO_CONTENT).body("Not users found") :
+                ResponseEntity.ok(users);
     }
 
     @GetMapping(value = "/{id}")

@@ -2,8 +2,8 @@
 package com.firstSpring.firstSpring.model;
 
 /**
- *
- * @author Artist-Code
+ *  Enum to define all role users in this demo, I have put only 4: admin, user, invited and developer
+ * @author Daniel Mora Cantillo
  */
 public enum RoleEnum {
     ADMIN,

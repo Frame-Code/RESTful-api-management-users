@@ -13,8 +13,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
+ *  Class to represent a user jwt token (access token and refresh token)
  *
- * @author Artist-Code
+ * @author Daniel Mora Cantillo
  */
 @Entity(name = "tokens")
 @Data

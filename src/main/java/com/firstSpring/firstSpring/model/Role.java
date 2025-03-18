@@ -15,9 +15,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- *
- * @author Artist-Code
- */
+ *  Entity to represent a user role using the corresponding Enum (in this project each role has many permissions and each permission is in many roles)
+ *  I have only put 2 audit fields (deleted, createdAt)
+ * @author Daniel Mora Cantillo
+ * */
 @Entity
 @Table(name = "roles")
 @Data

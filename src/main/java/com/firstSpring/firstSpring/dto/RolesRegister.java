@@ -6,7 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-
+/**
+ * @author Daniel Mora Cantillo
+ * */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

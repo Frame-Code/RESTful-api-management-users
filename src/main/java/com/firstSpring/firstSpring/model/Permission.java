@@ -13,9 +13,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
+ * Entity to represent a user permission using the enum 'PermissionEnum' to define all user's permissions with some audit fields (deleted, createdAt)
  *
- * @author Artist-Code
- */
+ * @author Daniel Mora Cantillo
+ *
+ * */
 @Entity
 @Table(name = "permissions")
 @Data

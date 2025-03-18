@@ -31,8 +31,11 @@ import lombok.NoArgsConstructor;
 import lombok.Builder;
 
 /**
+ *  Class to represent a User with the following relations:
+ *  A user has many tokens
+ *  A user has many roles and roles is in many users
  *
- * @author Artist-Code
+ * @author Daniel Mora Cantillo
  */
 @Entity
 @Table(name = "users")
@@ -88,16 +91,6 @@ public class UserEntity implements Serializable{
 
     public String getFullNames() {
         return name + " " + lastName;
-    }
-
-    public Set<String> getRolesString() {
-        if(roles == null || roles.isEmpty()) {
-            return null;
-        }
-
-        return roles.stream()
-                .map(role -> role.getRoleEnum().name())
-                .collect(Collectors.toSet());
     }
 
 }

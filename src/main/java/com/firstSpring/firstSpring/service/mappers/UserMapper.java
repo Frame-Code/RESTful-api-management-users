@@ -16,8 +16,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- *
- * @author Artist-Code
+ * Mapper to convert dto-entities entities-dto
+ * @author Daniel Mora Cantillo
  */
 @Mapper
 public interface UserMapper {
@@ -75,6 +75,9 @@ public interface UserMapper {
     @Mapping(target = "tokens", ignore = true)
     UserEntity toEntity(EditUser editUser);
 
+    /** Method to convert a set type Role to a Set type String using the role names
+     * @param roles a set of roles to convert it
+     * */
     @Named("mapRolesString")
     default Set<String> mapRolesString(Set<Role> roles) {
         return roles.stream()

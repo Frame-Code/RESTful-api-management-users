@@ -1,8 +1,8 @@
 package com.firstSpring.firstSpring.model;
 
 /**
- *
- * @author Artist-Code
+ *  Enum to represent token type, in this case just Bearer
+ * @author Daniel Mora Cantillo
  */
 public enum TokenType {
     BEARER

@@ -22,10 +22,9 @@ import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 /**
- * This is the filter to verify if the request have the respective jwt tokens.
- * Is necessary to the tokens are saved in the browser's cookies, because this filter only search
- * the token on the cookies, NOT in the headers of the request.
- * If the tokens are not present just the request go the following filter
+ * This is the filter to verify if the request has the respective jwt tokens.
+ * Searching the token on cookies and the headers of the request,
+ * If the tokens are not present, just the request goes the following filter
  * If the tokens are present, the user (getting the user around the jwt token) is saved in the spring security context
  *
  * @author Daniel Mora Cantillo
@@ -54,13 +53,23 @@ public class JwtTokenValidator extends OncePerRequestFilter {
             }
         }
 
+        //Token exists
         if(jwtToken == null || jwtToken.isBlank()) {
             LOG.log(Level.INFO, "No token from the cookies identified");
-            filterChain.doFilter(request, response);
-            return;
+
+            String authHeader = request.getHeader("Authorization");
+            if(authHeader == null || !authHeader.startsWith("Bearer ")) {
+                LOG.log(Level.WARNING, "No token from the headers identified");
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            jwtToken = authHeader.substring(7);
+
         }
 
         LOG.log(Level.INFO, "Token identified");
+
         try {
             DecodedJWT decodedJWT = jwtUtils.validateToken(jwtToken);
             LOG.log(Level.INFO, "Token valid");
@@ -72,12 +81,12 @@ public class JwtTokenValidator extends OncePerRequestFilter {
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
             LOG.log(Level.INFO, "User saved in the Spring context");
-            filterChain.doFilter(request, response);
-
         } catch (JWTVerificationException e) {
-            LOG.log(Level.SEVERE, "Error verifying the token " + e.getMessage());
+            LOG.log(Level.WARNING, "Error verifying the token " + e.getMessage());
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
+
+        filterChain.doFilter(request, response);
     }
 }

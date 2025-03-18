@@ -33,8 +33,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-/**
- * @author Artist-Code
+/** Class to manage log in, sign up and refresh token, this class is used from the AuthController
+ *
+ * @author Daniel Mora Cantillo
  */
 @Service
 public class AuthService {
@@ -55,6 +56,16 @@ public class AuthService {
     private UserMapper userMapper;
 
     /****************************************PRINCIPAL METHODS OF THIS CLASS*************************************/
+    /**
+     * This method is used to logging the user, with the following steps:
+     * 1. Using the instance of UserDetailsService we build and get an objet Type User (User class of spring security,
+     * this class is understood by Spring) using the parameter object, if the object is null,
+     * the user has not founded on the db and returns it
+     * 2. Verify if the password matches, if that is not true, the password is incorrect
+     * 3. We create an object type Authentication using the object User, to create the respective tokens, and finally return it
+     *
+     * @param userDTO dto with necessary data to log in a user
+     * */
     public ResponseEntity<?> login(@NotNull UserLogin userDTO) {
         try {
             UserDetails userDetails = userDetailsService.loadUserByUsername(userDTO.getEmail());
@@ -93,6 +104,17 @@ public class AuthService {
         }
     }
 
+    /**
+     * This method is used to register a new user, with the following steps:
+     * 1. We verify if the user's phone and user's email exist on the db (both attributes are unique),
+     * also verify if the request has respective roles,
+     * 2. We get a list type string with all role names saved on the db to match the roles got by the request to verify if that list is empty or not
+     * 3. Creates an object Type UserEntity with the data got by the request http to persist it and creates a list type
+     * SimpleGrantedAuthority with the roles and permissions of the user, to after create an object type Authentication with its data
+     * 4. Finally, is created the tokens and return it.
+     *
+     * @param userRegister dto with the necessary data to register a new user
+     * */
     public ResponseEntity<?> register(@NotNull UserRegister userRegister) {
         if (userRepository.findByEmail(userRegister.getEmail()).isPresent()) {
             LOG.log(Level.SEVERE, "The user with the email " + userRegister.getEmail() + " already exists");
@@ -133,7 +155,7 @@ public class AuthService {
 
         List<SimpleGrantedAuthority> authorityList = new ArrayList<>();
 
-        //ALWAYS is necessary add the string "ROLE_" before the name of "real role"
+        //ALWAYS is necessary to add the string "ROLE_" before the name of "real role"
         savedUser.getRoles().forEach(role -> authorityList.add(new SimpleGrantedAuthority("ROLE_".concat(role.getRoleEnum().name()))));
         savedUser.getRoles().stream()
                 .flatMap(role -> role.getPermissions().stream())
@@ -160,6 +182,11 @@ public class AuthService {
         return ResponseEntity.ok().body(new TokenResponse(jwtToken.get(), refreshToken.get(), userName));
     }
 
+    /** Method to create a refresh token, this method verifies if the token is valid and get his information
+     * to create an object type Authentication, and finally create the respective tokens to return it.
+     *
+     * @param authHeader header of the request http
+     * */
     public ResponseEntity<?> refreshToken(final String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             LOG.log(Level.WARNING, "Invalid bearer token");
@@ -211,6 +238,10 @@ public class AuthService {
 
     }
 
+    /** Method to saver user tokens
+     * @param user object to add a user signature
+     * @param jwtToken token to persist
+     * */
     private void saveUserToken(UserEntity user, String jwtToken) {
         tokenRepository.save(
                 Token.builder()
@@ -224,6 +255,10 @@ public class AuthService {
 
     }
 
+    /** Method to revoke all the tokens of the user
+     *
+     * @param user user to revoke all tokens
+     * */
     private void revokeAllTokens(UserEntity user) {
         Optional<UserEntity> userOpt = userRepository.findByEmail(user.getEmail());
         userOpt.ifPresent(userEntity -> {

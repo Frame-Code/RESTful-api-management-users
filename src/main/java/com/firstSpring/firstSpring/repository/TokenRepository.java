@@ -5,8 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 /**
+ *  Repository to manage to tokens from the db
  *
- * @author Artist-Code
+ * @author Daniel Mora Cantillo
  */
 @Repository
 public interface TokenRepository extends JpaRepository<Token, Long>{

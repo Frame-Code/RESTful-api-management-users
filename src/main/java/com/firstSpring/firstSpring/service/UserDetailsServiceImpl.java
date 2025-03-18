@@ -18,9 +18,11 @@ import java.util.logging.Logger;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-/*
+/**
+ *  Implement class of UserDetails service to verify if the user's email exists
+ *  and build an object type User to understood spring security
  *
- * @author Artist-Code
+ * @author Daniel Mora Cantillo
  */
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -28,6 +30,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
+    /** If the user's email exists, we create an object with the names, password, and a list of user's role and permissions
+     *
+     * @param username email to search on the db
+     * */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         //Searching the user on the db

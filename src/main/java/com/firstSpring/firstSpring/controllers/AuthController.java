@@ -11,7 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
- *  Controller with the endpoints necessaries to have a great login, register, and refresh tokens
+ *  Controller to manage different auth endpoints necessaries, all endpoints return an object TokenResponse with the
+ *  access token and refresh token, just that.
+ *  Endpoint 'POST /auth/log-in' to manage the user log in returning the mentioned before.
+ *  Endpoint 'POST /auth/sign-up' to register a new user, returning the mentioned before.
+ *  Endpoint 'POST /auth/refresh' to get a new access token and refresh token (in this project I don't use that)
  *
  * @author Daniel Mora Cantillo
  */

@@ -7,9 +7,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
+ * @author Daniel Mora Cantillo
  *
- * @author Artist-Code
- */
+ * */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
