@@ -30,7 +30,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
-    /** If the user's email exists, we create an object with the names, password, and a list of user's role and permissions
+    /** If the user's email exists, we create an object with the names, password, and a list of user's role and permissions to return it
      *
      * @param username email to search on the db
      * */

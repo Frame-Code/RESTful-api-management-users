@@ -23,6 +23,10 @@ import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 
+/** Service to manage all actions related with the users as find all, find by id, reset password, find a value X, or softDeleted
+ *
+ * @author Daniel Mora Cantillo
+ * */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -43,7 +47,10 @@ public class UserService {
 
     private final UserMapper userMapper;
 
-
+    /** Method to find all users from the db
+     *
+     * @return a list of users type UserResponse dto
+     * */
     public List<UserResponse> findAll() {
         return userRepository.findAllActiveUsers()
                 .stream()
@@ -51,11 +58,21 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    /** Method to find a user by id
+     *
+     * @return an Optional type EditUser dto
+     * @param id to search
+     * */
     public Optional<EditUser> findById(final Long id) {
         return userRepository.findByIdActive(id)
                 .map(userMapper::toEditUser);
     }
 
+    /** Method to reset by default the password of a user obtained by his id
+     *
+     * @return an Optional to will be Empty or with the default password
+     * @param id to search
+     * */
     public Optional<?> resetPassword(final Long id) {
         return userRepository.findByIdActive(id)
                 .map(user -> {
@@ -68,6 +85,11 @@ public class UserService {
                 });
     }
 
+    /** Method to find a user searching the value in the attribute name or email
+     *
+     * @return a list type UserResponse dto with all users to matches with it value
+     * @param value to search
+     * */
     public List<UserResponse> findByNameOrEmail(final String value) {
         return userRepository.findByNameOrEmail(value.transform( string -> "%" + string + "%"))
                 .stream()
@@ -78,6 +100,11 @@ public class UserService {
 
     }
 
+    /** Method to edit data user using EditUser dto
+     *
+     * @return an Optional type EditUser dto with the data persisted using EditUser param dto
+     * @param editUser dto with the important data to edit a user (including the id respective)
+     * */
     public Optional<EditUser> editUser(@NotNull final EditUser editUser) {
         return userRepository.findByIdActive(editUser.getId())
                 .map(user -> {
@@ -90,6 +117,10 @@ public class UserService {
                 .map(userMapper::toEditUser);
     }
 
+    /** Method to softly delete a user using his id
+     *
+     * @param id to search
+     * */
     public void softDeleteById(Long id) {
         userRepository.softDeleteById(id);
         LOG.log(Level.INFO, "User with the following id " + id.toString() + "has been deleted correctly");
